@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boss Deck</title>
+</head>
+<body>
+
+    <form action="/decks/new" method="POST">
+        <input type="text" name="name" placeholder="Nome do baralho">
+        <input type="text" name="description" placeholder="Descrição">
+        <button type="submit">Criar</button>
+    </form>
+
+    {% for deck in decks %}
+    <a href='/deck/{{deck["id"]}}'>{{deck["name"]}}</a>
+    <p>{{ deck["description"] }}</p>
+    {% endfor %}
+</body>
+</html>
