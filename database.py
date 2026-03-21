@@ -37,9 +37,10 @@ def init_db():
 
     try:
         cursor.execute("ALTER TABLE cards ADD COLUMN next_review TEXT")
-        cursor.execute("UPDATE cards SET next_review = date('now') WHERE next_review IS NULL")
     except:
         pass
+
+    cursor.execute("UPDATE cards SET next_review = date('now') WHERE next_review IS NULL")
 
 
     try:
