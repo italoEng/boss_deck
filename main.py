@@ -32,16 +32,16 @@ def new_card(deck_id):
     create_card(deck_id, front, back)
     return redirect(f"/deck/{deck_id}")
 
-@app.route("/deck/<int:deck_id>/study")
-def study(deck_id):
-    study = get_due_cards(deck_id)
-    return render_template("study.html", cards=study, deck_id=deck_id)
+@app.route("/deck/<int:deck_id>/cards")
+def cards(deck_id):
+    cards = get_due_cards(deck_id)
+    return render_template("cards.html", cards=cards, deck_id=deck_id)
 
-@app.route("/deck/<int:deck_id>/study/<int:card_id>", methods=["POST"])
+@app.route("/deck/<int:deck_id>/cards/<int:card_id>", methods=["POST"])
 def review_card(deck_id, card_id):
     quality = int(request.form["quality"])
     update_card_review(card_id, quality)
-    return redirect(f"/deck/{deck_id}/study")
+    return redirect(f"/deck/{deck_id}/cards")
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

@@ -4,18 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Boss Deck</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
 
     <form action="/decks/new" method="POST">
         <input type="text" name="name" placeholder="Nome do baralho">
         <input type="text" name="description" placeholder="Descrição">
-        <button type="submit">Criar</button>
+        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Criar</button>
     </form>
 
-    {% for deck in decks %}
-    <a href='/deck/{{deck["id"]}}'>{{deck["name"]}}</a>
-    <p>{{ deck["description"] }}</p>
-    {% endfor %}
+    <div class="grid grid-cols-4 gap-4 p-8">
+        <!-- baralhos -->
+        {% for deck in decks %}
+        <a href='/deck/{{ deck["id"] }}' class="border rounded-lg p-12 block hover:bg-gray-100">
+            <h2 class="font-bold text-lg">{{ deck["name"] }}</h2>
+            <p class="text-gray-500">{{ deck["description"] }}</p>
+        </a>
+        {% endfor %}
+    </div>
+
+
 </body>
 </html>

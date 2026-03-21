@@ -4,17 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
+    <script src="/static/cards.js"></script>
+
     {% if cards %}
         <p>{{ cards[0]["front"] }}</p>
-        <p>{{ cards[0]["back"] }}</p>
+
+        <div id="verso" style="display:none">
+            <p>{{ cards[0]["back"] }}</p>
+        </div>
+
+        <button onclick="revelar()">Verso</button>
 
         <form action="/deck/{{ deck_id }}/study/{{ cards[0]['id'] }}" method="POST">
             <button type="submit" name="quality" value="0">Esqueci</button>
             <button type="submit" name="quality" value="3">Lembrei</button>
             <button type="submit" name="quality" value="5">Fácil</button>
         </form>
+
     {% else %}
         <p>Nenhum card para revisar hoje!</p>
         <a href="/">Menu</a>

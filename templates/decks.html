@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
     <a href="/">Menu</a>
-    <a href='/deck/{{ deck_id }}/study'>Iniciar</a>
+    <a href='/deck/{{ deck_id }}/cards'>Iniciar</a>
 
     <form action="/deck/{{ deck_id }}/cards/new" method="POST">
         <input type="text" name="front" placeholder="Frente">
@@ -15,8 +16,7 @@
         <button type="submit">Criar card</button>
     </form>
 
-    {% for card in cards %}
-    <p>{{ card["front"] }} - {{ card["back"] }}</p>
-    {% endfor %}
+    <p>Total de cards: {{cards | length}}</p>
+
 </body>
 </html>
