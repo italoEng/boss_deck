@@ -114,6 +114,13 @@ def get_due_cards(deck_id):
     conn.close()
     return cards
 
+def delete_deck(deck_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM decks WHERE id = ?", (deck_id,))
+    conn.commit()
+    conn.close()
+
 if __name__ == "__main__":
     init_db()
     print("Banco iniciado!")

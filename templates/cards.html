@@ -18,9 +18,9 @@
 
         <button onclick="revelar()">Verso</button>
 
-        <form action="/deck/{{ deck_id }}/study/{{ cards[0]['id'] }}" method="POST">
-            <button type="submit" name="quality" value="0">Esqueci</button>
-            <button type="submit" name="quality" value="3">Lembrei</button>
+        <form action="/deck/{{ deck_id }}/cards/{{ cards[0]['id'] }}" method="POST">
+            <button type="submit" name="quality" value="0">Errei</button>
+            <button type="submit" name="quality" value="3">Dificil</button>
             <button type="submit" name="quality" value="5">Fácil</button>
         </form>
 
