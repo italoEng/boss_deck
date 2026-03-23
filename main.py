@@ -2,7 +2,7 @@ from flask import Flask
 from flask import render_template
 from flask import request
 from flask import redirect
-from database import init_db, create_deck, get_decks, create_card, get_cards, update_card_review, get_due_cards, delete_deck
+from database import init_db, create_deck, get_decks, create_card, get_cards, update_card_review, get_due_cards, delete_deck, update_deck
 
 app = Flask(__name__)
 
@@ -18,6 +18,13 @@ def new_deck():
     name = request.form["name"]
     description = request.form["description"]
     create_deck(name, description)
+    return redirect("/")
+
+@app.route("/deck/<int:deck_id>/edit", methods=["POST"])
+def editar_deck(deck_id):
+    name = request.form["name"]
+    description = request.form["description"]
+    update_deck(name, description, deck_id)
     return redirect("/")
 
 @app.route("/deck/<int:deck_id>/delete", methods=["POST"])
