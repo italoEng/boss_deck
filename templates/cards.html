@@ -11,20 +11,21 @@
 
     {% if cards %}
         <p class="text-center text-3xl mt-4">{{ cards[0]["front"] }}</p>
+        <img src="/static/uploads/{{cards[0]['front_img'] }}" class="max-h-48 mx-auto mt-4 rounded">
 
         <div id="verso" style="display:none">
             <p class="text-center text-xl m-4">{{ cards[0]["back"] }}</p>
         </div>
 
         <div class="flex justify-center m-4">
-            <button id="btn-revelar" onclick="revelar()" class="border px-4 py-2 rounded">Verso</button>
+            <button id="btn-revelar" onclick="revelar()" class="border px-4 py-2 hover:bg-gray-100 rounded">Verso</button>
         </div>
         
         <div class="flex justify-center m-4">
             <form action="/deck/{{ deck_id }}/cards/{{ cards[0]['id'] }}" method="POST">
-                <button class="border px-4 py-2 rounded" type="submit" name="quality" value="0">Errei</button>
-                <button class="border px-4 py-2 rounded" type="submit" name="quality" value="5">Fácil</button>
-                <button class="border px-4 py-2 rounded" type="submit" name="quality" value="3">Dificil</button>
+                <button class="border px-4 py-2 rounded hover:bg-red-300" type="submit" name="quality" value="0">Errei</button>
+                <button class="border px-4 py-2 rounded hover:bg-green-300" type="submit" name="quality" value="5">Fácil</button>
+                <button class="border px-4 py-2 rounded hover:bg-orange-300" type="submit" name="quality" value="3">Dificil</button>
             </form>
         </div>
 

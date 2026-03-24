@@ -42,9 +42,13 @@ def init_db():
 
     cursor.execute("UPDATE cards SET next_review = date('now') WHERE next_review IS NULL")
 
-
     try:
         cursor.execute("ALTER TABLE cards ADD COLUMN repetitions INTEGER DEFAULT 0")
+    except:
+        pass
+
+    try:
+        cursor.execute("ALTER TABLE cards ADD COLUMN front_img TEXT")
     except:
         pass
 
@@ -66,12 +70,12 @@ def create_deck(name, description):
     conn.commit()
     conn.close()
 
-def create_card(deck_id, front, back):
+def create_card(deck_id, front, back, front_img=""):
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute(
-        "INSERT INTO cards (deck_id, front, back) VALUES (?, ?, ?)",
-        (deck_id, front, back)
+        "INSERT INTO cards (deck_id, front, back, next_review, front_img) VALUES (?, ?, ?, date('now'), ?)",
+        (deck_id, front, back, front_img)
     )
     conn.commit()
     conn.close()

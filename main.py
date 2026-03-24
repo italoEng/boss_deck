@@ -1,11 +1,13 @@
 from flask import Flask
+import os
+from werkzeug.utils import secure_filename
 from flask import render_template
 from flask import request
 from flask import redirect
 from database import init_db, create_deck, get_decks, create_card, get_cards, update_card_review, get_due_cards, delete_deck, update_deck
 
 app = Flask(__name__)
-
+app.config["UPLOAD_FOLDER"] = "static/uploads"
 init_db()
 
 @app.route("/")
@@ -41,7 +43,16 @@ def deck_view(deck_id):
 def new_card(deck_id):
     front = request.form["front"]
     back = request.form["back"]
-    create_card(deck_id, front, back)
+    front_img = ""
+
+    if "front_img" in request.files:
+        file = request.files["front_img"]
+        if file.filename != "":
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+            front_img = f'uploads/{filename}'
+
+    create_card(deck_id, front, back, front_img)
     return redirect(f"/deck/{deck_id}")
 
 @app.route("/deck/<int:deck_id>/cards")
