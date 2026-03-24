@@ -10,22 +10,26 @@
     <script src="/static/cards.js"></script>
 
     {% if cards %}
-        <p>{{ cards[0]["front"] }}</p>
+        <p class="text-center text-3xl mt-4">{{ cards[0]["front"] }}</p>
 
         <div id="verso" style="display:none">
-            <p>{{ cards[0]["back"] }}</p>
+            <p class="text-center text-xl m-4">{{ cards[0]["back"] }}</p>
         </div>
 
-        <button onclick="revelar()">Verso</button>
-
-        <form action="/deck/{{ deck_id }}/cards/{{ cards[0]['id'] }}" method="POST">
-            <button type="submit" name="quality" value="0">Errei</button>
-            <button type="submit" name="quality" value="3">Dificil</button>
-            <button type="submit" name="quality" value="5">Fácil</button>
-        </form>
+        <div class="flex justify-center m-4">
+            <button id="btn-revelar" onclick="revelar()" class="border px-4 py-2 rounded">Verso</button>
+        </div>
+        
+        <div class="flex justify-center m-4">
+            <form action="/deck/{{ deck_id }}/cards/{{ cards[0]['id'] }}" method="POST">
+                <button class="border px-4 py-2 rounded" type="submit" name="quality" value="0">Errei</button>
+                <button class="border px-4 py-2 rounded" type="submit" name="quality" value="5">Fácil</button>
+                <button class="border px-4 py-2 rounded" type="submit" name="quality" value="3">Dificil</button>
+            </form>
+        </div>
 
     {% else %}
-        <p>Nenhum card para revisar hoje!</p>
+        <p class="text-center text-green-500">Nenhum card para revisar hoje!</p>
         <a href="/">Menu</a>
     {% endif %}
 </body>
