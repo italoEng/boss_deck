@@ -44,6 +44,7 @@ def new_card(deck_id):
     front = request.form["front"]
     back = request.form["back"]
     front_img = ""
+    front_audio = ""
 
     if "front_img" in request.files:
         file = request.files["front_img"]
@@ -52,7 +53,15 @@ def new_card(deck_id):
             file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
             front_img = f'uploads/{filename}'
 
-    create_card(deck_id, front, back, front_img)
+    if "front_audio" in request.files:
+        file = request.files["front_audio"]
+        if file.filename != "":
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+            front_audio = f'uploads/{filename}'
+
+
+    create_card(deck_id, front, back, front_img, front_audio)
     return redirect(f"/deck/{deck_id}")
 
 @app.route("/deck/<int:deck_id>/cards")

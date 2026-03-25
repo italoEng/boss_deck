@@ -10,10 +10,19 @@
     <script src="/static/cards.js"></script>
 
     {% if cards %}
-        <p class="text-center text-3xl mt-4">{{ cards[0]["front"] }}</p>
         {% if cards[0]["front_img"] %}
-            <img src="/static/{{cards[0]['front_img'] }}" class="max-h-48 mx-auto mt-4 rounded">
+            <img src="/static/{{cards[0]['front_img'] }}" class="max-h-24 mx-auto mt-4 rounded">
         {% endif %}
+
+        {% if cards[0]["front_audio"] %}
+            <audio id="audio-card" autoplay src="/static/{{ cards[0]['front_audio'] }}"></audio>
+            <button onclick="document.getElementById('audio-card').play()" 
+                class="bg-blue-500 text-white px-4 py-2 rounded mt-2">
+                🔊 Ouvir novamente
+            </button>
+        {% endif %}
+
+        <p class="text-center text-3xl mt-4">{{ cards[0]["front"] }}</p>
 
         <div id="verso" style="display:none">
             <p class="text-center text-xl m-4">{{ cards[0]["back"] }}</p>

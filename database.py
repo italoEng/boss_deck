@@ -52,6 +52,11 @@ def init_db():
     except:
         pass
 
+    try:
+        cursor.execute("ALTER TABLE cards ADD COLUMN front_audio TEXT")
+    except:
+        pass
+
     conn.commit()
     conn.close()
 
@@ -70,12 +75,12 @@ def create_deck(name, description):
     conn.commit()
     conn.close()
 
-def create_card(deck_id, front, back, front_img=""):
+def create_card(deck_id, front, back, front_img="", front_audio=""):
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute(
-        "INSERT INTO cards (deck_id, front, back, next_review, front_img) VALUES (?, ?, ?, date('now'), ?)",
-        (deck_id, front, back, front_img)
+        "INSERT INTO cards (deck_id, front, back, next_review, front_img, front_audio) VALUES (?, ?, ?, date('now'), ?, ?)",
+        (deck_id, front, back, front_img, front_audio)
     )
     conn.commit()
     conn.close()
