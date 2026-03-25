@@ -12,16 +12,32 @@
         <a href='/deck/{{ deck_id }}/cards'>Iniciar</a>
     </nav>
 
+    <div onclick="document.getElementById('modal').classList.remove('hidden')" 
+        class="border-2 border-dashed rounded-lg p-6 flex items-center justify-center cursor-pointer hover:bg-gray-100">
+        <span class="text-4xl text-gray-400">+</span>
+    </div>
+
     <h1 class="text-center">Deck (add nome): {{ deck_id }}</h1>
 
-    <form action="/deck/{{ deck_id }}/cards/new" method="POST" enctype="multipart/form-data">
-        <input type="text" name="front" placeholder="Frente">
-        <input type="text" name="back" placeholder="Verso">
-        <input type="file" name="front_img" accept="image/*">
-        <button type="submit">Criar card</button>
-    </form>
+    <div id="modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white rounded-lg p-12 w-96">
+            <h2 class="font-bold text-xl mb-4">Novo Card</h2>
+            <form action="/deck/{{ deck_id }}/cards/new" method="POST" enctype="multipart/form-data">
+                <input type="text" name="front" placeholder="Frente" class="border w-full p-2 rounded mb-3">
+                <input type="text" name="back" placeholder="Verso" class="border w-full p-2 rounded mb-4">
+                <label class=" border w-full rounded-lg p-4 flex items-center justify-center cursor-pointer hover:bg-gray-100 mb-4">
+                    <span class="text-gray-400">Clique para adicionar uma imagem</span>
+                    <input type="file" name="front_img" accept="image/*" class="hidden">
+                </label>
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded w-full">Criar</button>
+            </form>
+            <button onclick="document.getElementById('modal').classList.add('hidden')" 
+                    class="border w-full mt-2 text-gray-500 w-full text-center">Cancelar</button>
+        </div>
+    </div>
 
     <p>Total de cards: {{cards | length}}</p>
+
 
 </body>
 </html>

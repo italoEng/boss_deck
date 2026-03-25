@@ -11,7 +11,9 @@
 
     {% if cards %}
         <p class="text-center text-3xl mt-4">{{ cards[0]["front"] }}</p>
-        <img src="/static/uploads/{{cards[0]['front_img'] }}" class="max-h-48 mx-auto mt-4 rounded">
+        {% if cards[0]["front_img"] %}
+            <img src="/static/{{cards[0]['front_img'] }}" class="max-h-48 mx-auto mt-4 rounded">
+        {% endif %}
 
         <div id="verso" style="display:none">
             <p class="text-center text-xl m-4">{{ cards[0]["back"] }}</p>
