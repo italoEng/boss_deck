@@ -7,9 +7,11 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
+    <script src="/static/decks.js"></script>
+
+
     <nav class="bg-red-500 border-b px-8 py-4">
         <a href="/">Menu</a>
-        <a href='/deck/{{ deck_id }}/cards'>Iniciar</a>
     </nav>
 
     <h1 class="text-center">Deck (add nome): {{ deck_id }}</h1>
@@ -19,7 +21,18 @@
             class="border-2 border-dashed rounded-lg p-6 flex items-center justify-center cursor-pointer hover:bg-gray-100">
             <span class="text-4xl text-gray-400">+</span>
         </div>
-        
+
+    <div class="flex items-center gap-4 p-8 border-2 hover:bg-green-300 cursor-pointer">
+        <a href='/deck/{{ deck_id }}/cards'>Iniciar</a>
+    </div>
+    
+    
+    <button onclick="toggleLista()"
+        class="flex items-center gap-4 p-8 border-2 hover:bg-green-300 cursor-pointer">
+        Editar Cards
+    </button>
+
+
         <p>Total de cards: {{cards | length}}</p>
     </div>
 
@@ -42,6 +55,27 @@
             <button onclick="document.getElementById('modal').classList.add('hidden')" 
                     class="border w-full mt-2 text-gray-500 w-full text-center">Cancelar</button>
         </div>
+    </div>
+
+    <div id ="lista" class="hidden p-8">
+        <table class="w-full border-collapse">
+            <thead>
+                <tr class="bg-gray-100">
+                    <th class="border p-2 text-left">id</th>
+                    <th class="border p-2 text-left">Frente</th>
+                    <th class="border p-2 text-left">Verso</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for card in cards %}
+            <tr class="hover:bg-gray-50">
+                <td class="border p-2">{{ card["id"]}}</td>
+                <td class="border p-2">{{ card["front"] }}</td>
+                <td class="border p-2">{{ card["back"] }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
     </div>
 
 </body>
