@@ -132,6 +132,15 @@ def update_deck(name, description, deck_id):
     conn.commit()
     conn.close()
 
+def update_card(front, back, card_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("UPDATE cards SET front = ?, back = ? WHERE id = ?",
+        (front, back, card_id)
+    )
+    conn.commit()
+    conn.close()
+
 def delete_deck(deck_id):
     conn = get_connection()
     cursor = conn.cursor()

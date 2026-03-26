@@ -8,6 +8,7 @@
 </head>
 <body>
     <script src="/static/decks.js"></script>
+    <script>const DECK_ID = {{ deck_id }};</script>
 
 
     <nav class="bg-red-500 border-b px-8 py-4">
@@ -22,19 +23,59 @@
             <span class="text-4xl text-gray-400">+</span>
         </div>
 
-    <div class="flex items-center gap-4 p-8 border-2 hover:bg-green-300 cursor-pointer">
-        <a href='/deck/{{ deck_id }}/cards'>Iniciar</a>
-    </div>
+    <a href='/deck/{{ deck_id }}/cards'
+        class="flex items-center gap-4 p-8 border-2 hover:bg-green-300 cursor-pointer">
+        Iniciar
+    </a>
+
     
     
     <button onclick="toggleLista()"
-        class="flex items-center gap-4 p-8 border-2 hover:bg-green-300 cursor-pointer">
+        class="flex items-center gap-4 p-8 border-2 hover:bg-orange-300 cursor-pointer">
         Editar Cards
     </button>
 
 
         <p>Total de cards: {{cards | length}}</p>
     </div>
+
+    <div id ="lista" class="hidden p-8">
+        <table class="w-full border-collapse">
+            <thead>
+                <tr class="bg-gray-100">
+                    <th class="border p-2 text-left">id</th>
+                    <th class="border p-2 text-left">Frente</th>
+                    <th class="border p-2 text-left">Verso</th>
+                    <th class="border p-2 text-left">Editar</th>
+                    <th class="border p-2 text-left">Excluir</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for card in cards %}
+            <tr class="hover:bg-gray-50">
+                <td class="border p-2">{{ card["id"]}}</td>
+                <td class="border p-2">{{ card["front"] }}</td>
+                <td class="border p-2">{{ card["back"] }}</td>
+                <td class="border p-2">
+                    <button onclick="abrirEditarCard({{ card['id'] }}, '{{ card['front'] }}', '{{ card['back'] }}')"
+                        class="bg-yellow-400 text-white px-2 py-1 rounded text-sm">
+                        ✏️
+                    </button>
+                </td>
+                <td class="border p-2">
+                    <form action="/deck/{{ deck_id }}/cards/{{ card['id'] }}/delete" onsubmit="confirmarexclusao(event)" method="POST">
+                        <button type="submit" 
+                            class="bg-red-500 text-white px-2 py-1 rounded text-sm">
+                            🗑
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
 
     <div id="modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
         <div class="bg-white rounded-lg p-12 w-96">
@@ -57,25 +98,17 @@
         </div>
     </div>
 
-    <div id ="lista" class="hidden p-8">
-        <table class="w-full border-collapse">
-            <thead>
-                <tr class="bg-gray-100">
-                    <th class="border p-2 text-left">id</th>
-                    <th class="border p-2 text-left">Frente</th>
-                    <th class="border p-2 text-left">Verso</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for card in cards %}
-            <tr class="hover:bg-gray-50">
-                <td class="border p-2">{{ card["id"]}}</td>
-                <td class="border p-2">{{ card["front"] }}</td>
-                <td class="border p-2">{{ card["back"] }}</td>
-            </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+    <div id="modal-edit-card" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white rounded-lg p-12 w-96">
+            <h2 class="font-bold text-xl mb-4">Editar Card</h2>
+            <form id="form-edit-card" method="POST">
+                <input type="text" id="edit-front" name="front" placeholder="Frente" class="border w-full p-2 rounded mb-3">
+                <input type="text" id="edit-back" name="back" placeholder="Verso" class="border w-full p-2 rounded mb-4">
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded w-full">Salvar</button>
+            </form>
+            <button onclick="document.getElementById('modal-edit-card').classList.add('hidden')"
+                    class="border w-full mt-2 text-gray-500 text-center">Cancelar</button>
+        </div>
     </div>
 
 </body>

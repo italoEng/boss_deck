@@ -4,7 +4,8 @@ from werkzeug.utils import secure_filename
 from flask import render_template
 from flask import request
 from flask import redirect
-from database import init_db, create_deck, get_decks, create_card, get_cards, update_card_review, get_due_cards, delete_deck, update_deck
+from database import init_db, create_deck, get_decks, create_card, get_cards, update_card_review, get_due_cards, update_deck, update_card
+from database import delete_deck, delete_card
 
 app = Flask(__name__)
 app.config["UPLOAD_FOLDER"] = "static/uploads"
@@ -64,6 +65,14 @@ def new_card(deck_id):
     create_card(deck_id, front, back, front_img, front_audio)
     return redirect(f"/deck/{deck_id}")
 
+@app.route("/deck/<int:deck_id>/cards/<int:card_id>/edit", methods=["POST"])
+def editar_card(deck_id, card_id):
+    front = request.form["front"]
+    back = request.form["back"]
+    update_card(front, back, card_id)
+    return redirect(f"/deck/{deck_id}#lista")
+
+
 @app.route("/deck/<int:deck_id>/cards")
 def cards(deck_id):
     cards = get_due_cards(deck_id)
@@ -74,6 +83,11 @@ def review_card(deck_id, card_id):
     quality = int(request.form["quality"])
     update_card_review(card_id, quality)
     return redirect(f"/deck/{deck_id}/cards")
+
+@app.route("/deck/<int:deck_id>/cards/<int:card_id>/delete", methods=["POST"])
+def card_excluir(deck_id, card_id):
+    delete_card(card_id)
+    return redirect(f"/deck/{deck_id}#lista")
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
