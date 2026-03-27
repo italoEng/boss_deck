@@ -13,6 +13,15 @@ window.onload = function() {
     }
 }
 
+window.onload = function() {
+    if (window.location.hash === '#lista') {
+        document.getElementById('lista').style.display = 'block';
+    }
+    if (window.location.hash === '#modal-aberto') {
+        document.getElementById('modal').classList.remove('hidden');
+    }
+}
+
 function confirmarexclusao(event) {
     if(!confirm("Tem certeza que deseja excluir este card?")) {
         event.preventDefault();

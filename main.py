@@ -63,7 +63,7 @@ def new_card(deck_id):
 
 
     create_card(deck_id, front, back, front_img, front_audio)
-    return redirect(f"/deck/{deck_id}")
+    return redirect(f"/deck/{deck_id}#modal-aberto")
 
 @app.route("/deck/<int:deck_id>/cards/<int:card_id>/edit", methods=["POST"])
 def editar_card(deck_id, card_id):

@@ -14,15 +14,17 @@
             <img src="/static/{{cards[0]['front_img'] }}" class="max-h-24 mx-auto mt-4 rounded">
         {% endif %}
 
-        {% if cards[0]["front_audio"] %}
-            <audio id="audio-card" autoplay src="/static/{{ cards[0]['front_audio'] }}"></audio>
-            <button onclick="document.getElementById('audio-card').play()" 
-                class="bg-blue-500 text-white px-4 py-2 rounded mt-2">
-                🔊 Ouvir novamente
-            </button>
-        {% endif %}
+        <div class="flex items-centre justify-center gap-4">
+            {% if cards[0]["front_audio"] %}
+                <audio id="audio-card" autoplay src="/static/{{ cards[0]['front_audio'] }}"></audio>
+                <button onclick="document.getElementById('audio-card').play()" 
+                    class="border mt-4 px-4 py-2 rounded hover:bg-gray-100">
+                    🔊
+                </button>
+            {% endif %}
 
-        <p class="text-center text-3xl mt-4">{{ cards[0]["front"] }}</p>
+            <p class="text-center text-3xl mt-4">{{ cards[0]["front"] }}</p>
+        </div>
 
         <div id="verso" style="display:none">
             <p class="text-center text-xl m-4">{{ cards[0]["back"] }}</p>
