@@ -38,7 +38,8 @@ def deck_excluir(deck_id):
 @app.route("/deck/<int:deck_id>")
 def deck_view(deck_id):
     cards = get_cards(deck_id)
-    return render_template("decks.html", cards=cards, deck_id=deck_id)
+    due_cards = get_due_cards(deck_id)
+    return render_template("decks.html", cards=cards, deck_id=deck_id, due=len(due_cards))
 
 @app.route("/deck/<int:deck_id>/cards/new", methods=["POST"])
 def new_card(deck_id):
@@ -53,6 +54,8 @@ def new_card(deck_id):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
             front_img = f'uploads/{filename}'
+    if not front_img:
+        front_img = request.form.get("front_img_url", "")
 
     if "front_audio" in request.files:
         file = request.files["front_audio"]

@@ -11,8 +11,14 @@
 
     {% if cards %}
         {% if cards[0]["front_img"] %}
-            <img src="/static/{{cards[0]['front_img'] }}" class="max-h-24 mx-auto mt-4 rounded">
+            {% set img = cards[0]["front_img"] %}
+            {% if "http" in img %}
+                <img src="{{ img }}" class="max-h-24 mx-auto mt-4 rounded">
+            {% else %}
+                <img src="/static/{{ img }}" class="max-h-24 mx-auto mt-4 rounded">
+            {% endif %}
         {% endif %}
+
 
         <div class="flex items-centre justify-center gap-4">
             {% if cards[0]["front_audio"] %}
