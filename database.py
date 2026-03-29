@@ -88,7 +88,15 @@ def create_card(deck_id, front, back, front_img="", front_audio=""):
 def get_decks():
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM decks")
+    cursor.execute("""
+        SELECT 
+            decks.*, 
+            COUNT(CASE WHEN cards.next_review <= date('now') THEN 1 END) AS due
+        FROM decks
+        LEFT JOIN cards 
+            ON cards.deck_id = decks.id
+        GROUP BY decks.id
+    """)
     decks = cursor.fetchall()
     conn.close()
     return decks
