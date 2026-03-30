@@ -1,4 +1,5 @@
 import sqlite3
+import os
 from sm2 import sm2
 
 DB = "boss_deck.db"
@@ -160,6 +161,22 @@ def delete_deck(deck_id):
 def delete_card(card_id):
     conn = get_connection()
     cursor = conn.cursor()
+    card = cursor.execute("SELECT front_img, front_audio FROM cards WHERE id = ?", (card_id,)).fetchone()
+
+    if card:
+        if card["front_img"] and card["front_img"].startswith("uploads/"):
+            path = os.path.join("static", card["front_img"])
+            if os.path.exists(path):
+                os.remove(path)
+
+
+        if card["front_audio"] and card["front_audio"].startswith("uploads/"):
+            path = os.path.join("static", card["front_audio"])
+            if os.path.exists(path):
+                os.remove(path)   
+
+
+
     cursor.execute("DELETE FROM cards WHERE id = ?", (card_id,))
     conn.commit()
     conn.close()
