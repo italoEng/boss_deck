@@ -84,7 +84,7 @@ def cards(deck_id):
 @app.route("/deck/<int:deck_id>/cards/<int:card_id>", methods=["POST"])
 def review_card(deck_id, card_id):
     quality = int(request.form["quality"])
-    update_card_review(card_id, quality)
+    update_card_review(card_id, quality, deck_id)
     return redirect(f"/deck/{deck_id}/cards")
 
 @app.route("/deck/<int:deck_id>/cards/<int:card_id>/delete", methods=["POST"])

@@ -26,6 +26,14 @@ def init_db():
         )
     """)
 
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS review_log (
+        id          INTEGER PRIMARY KEY AUTOINCREMENT,
+        card_id     INTEGER,
+        reviewed_at TEXT DEFAULT (date('now'))
+    )
+    """)
+
     try:
         cursor.execute("ALTER TABLE cards ADD COLUMN easiness REAL DEFAULT 2.5")
     except:
@@ -55,6 +63,11 @@ def init_db():
 
     try:
         cursor.execute("ALTER TABLE cards ADD COLUMN front_audio TEXT")
+    except:
+        pass
+
+    try:
+        cursor.execute("ALTER TABLE review_log ADD COLUMN deck_id INTEGER")
     except:
         pass
 
@@ -110,7 +123,7 @@ def get_cards(deck_id):
     conn.close()
     return cards
 
-def update_card_review(card_id, quality):
+def update_card_review(card_id, quality, deck_id):
     conn = get_connection()
     cursor = conn.cursor()
     card = cursor.execute("SELECT * FROM cards WHERE id = ?", (card_id,)).fetchone()
@@ -121,6 +134,7 @@ def update_card_review(card_id, quality):
         UPDATE cards SET easiness=?, interval=?, next_review=?, repetitions=?
         WHERE id=?
     """, (new_easiness, new_interval, next_review, card["repetitions"] + 1, card_id))
+    cursor.execute("INSERT INTO review_log (card_id, deck_id) VALUES (?, ?)", (card_id, deck_id))
     conn.commit()
     conn.close()
 
