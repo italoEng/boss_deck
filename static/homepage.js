@@ -22,16 +22,22 @@ function buildHeatmap() {
     HEATMAP_DATA.forEach(d => { map[d.reviewed_at] = d.total; });
 
     const container = document.getElementById('heatmap');
+    container.innerHTML = '';
     container.style.display = 'grid';
     container.style.gridTemplateRows = 'repeat(7, 12px)';
     container.style.gridAutoFlow = 'column';
-    container.style.gap = '3px';
+    container.style.gridAutoColumns = '12px';
+    container.style.gap = '5px';
 
     const today = new Date();
+    const start = new Date(today.getFullYear(), 0, 1);
+    const end = new Date(today.getFullYear(), 11, 31);
+    const diffDays = Math.floor((end - start) / (1000 * 60 * 60 * 24));
 
-    for (let i = 364; i >= 0; i--) {
-        const date = new Date(today);
-        date.setDate(today.getDate() - i);
+    for (let i = 0; i <= diffDays; i++) {
+        const date = new Date(start);
+        date.setDate(start.getDate() + i);
+
         const key = date.toISOString().slice(0, 10);
         const count = map[key] || 0;
 
@@ -41,11 +47,11 @@ function buildHeatmap() {
         box.style.borderRadius = '2px';
         box.title = `${key}: ${count} revisões`;
 
-        if (count === 0)       box.style.background = '#e5e7eb';
-        else if (count < 5)    box.style.background = '#86efac';
-        else if (count < 10)   box.style.background = '#4ade80';
-        else if (count < 20)   box.style.background = '#16a34a';
-        else                   box.style.background = '#14532d';
+        if (count === 0)       box.style.background = '#ebedf0';
+        else if (count < 5)    box.style.background = '#9be9a8';
+        else if (count < 10)   box.style.background = '#40c463';
+        else if (count < 20)   box.style.background = '#30a14e';
+        else                   box.style.background = '#216e39';
 
         container.appendChild(box);
     }
