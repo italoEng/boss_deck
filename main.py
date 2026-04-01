@@ -5,7 +5,7 @@ from flask import render_template
 from flask import request
 from flask import redirect
 from database import init_db, create_deck, get_decks, create_card, get_cards, update_card_review, get_due_cards, update_deck, update_card
-from database import delete_deck, delete_card
+from database import delete_deck, delete_card, get_review_heatmap
 
 app = Flask(__name__)
 app.config["UPLOAD_FOLDER"] = "static/uploads"
@@ -14,7 +14,8 @@ init_db()
 @app.route("/")
 def index():
     decks = get_decks()
-    return render_template("homepage.html", decks=decks)
+    heatmap = get_review_heatmap()
+    return render_template("homepage.html", decks=decks, heatmap=[dict(h) for h in heatmap])
 
 @app.route("/decks/new", methods=["POST"])
 def new_deck():

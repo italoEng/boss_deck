@@ -195,6 +195,22 @@ def delete_card(card_id):
     conn.commit()
     conn.close()
 
+
+# grafico heatmap
+def get_review_heatmap():
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT reviewed_at, COUNT(*) AS total
+        FROM review_log
+        GROUP BY reviewed_at
+        ORDER BY reviewed_at
+    """)
+    data = cursor.fetchall()
+    conn.commit()
+    conn.close()
+    return data
+
 if __name__ == "__main__":
     init_db()
     print("Banco iniciado!")
