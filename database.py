@@ -1,17 +1,19 @@
-import sqlite3
+import pymysql
+from dotenv import load_dotenv
 import os
 from sm2 import sm2
 
-DB = "boss_deck.db"
+
+load_dotenv()
 
 def init_db():
 
-    conn = sqlite3.connect(DB)
-    cursor  = conn.cursor()
+    conn = get_connection()
+    cursor = conn.cursor()
 
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS decks (
-            id          INTEGER PRIMARY KEY AUTOINCREMENT,
+            id          INTEGER PRIMARY KEY AUTO_INCREMENT,
             name        TEXT NOT NULL,
             description TEXT
         )
@@ -19,55 +21,29 @@ def init_db():
 
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS cards (
-            id          INTEGER PRIMARY KEY AUTOINCREMENT,
-            deck_id     INTEGER NOT NULL REFERENCES decks(id),
+            id          INT PRIMARY KEY AUTO_INCREMENT,
+            deck_id     INT NOT NULL,
             front       TEXT NOT NULL,
-            back        TEXT NOT NULL
+            back        TEXT NOT NULL,
+            easiness    FLOAT DEFAULT 2.5,
+            `interval`    INT DEFAULT 1,
+            repetitions INT DEFAULT 0,
+            front_img   TEXT,
+            front_audio TEXT
         )
     """)
 
     cursor.execute("""
-    CREATE TABLE IF NOT EXISTS review_log (
-        id          INTEGER PRIMARY KEY AUTOINCREMENT,
-        card_id     INTEGER,
-        reviewed_at TEXT DEFAULT (date('now'))
-    )
+        CREATE TABLE IF NOT EXISTS review_log (
+            id          INT PRIMARY KEY AUTO_INCREMENT,
+            card_id     INT,
+            deck_id     INT,
+            reviewed_at DATE
+        )
     """)
 
     try:
-        cursor.execute("ALTER TABLE cards ADD COLUMN easiness REAL DEFAULT 2.5")
-    except:
-        pass
-
-    try:
-        cursor.execute("ALTER TABLE cards ADD COLUMN interval INTEGER DEFAULT 1")
-    except:
-        pass
-
-    try:
-        cursor.execute("ALTER TABLE cards ADD COLUMN next_review TEXT")
-    except:
-        pass
-
-    cursor.execute("UPDATE cards SET next_review = date('now') WHERE next_review IS NULL")
-
-    try:
-        cursor.execute("ALTER TABLE cards ADD COLUMN repetitions INTEGER DEFAULT 0")
-    except:
-        pass
-
-    try:
-        cursor.execute("ALTER TABLE cards ADD COLUMN front_img TEXT")
-    except:
-        pass
-
-    try:
-        cursor.execute("ALTER TABLE cards ADD COLUMN front_audio TEXT")
-    except:
-        pass
-
-    try:
-        cursor.execute("ALTER TABLE review_log ADD COLUMN deck_id INTEGER")
+        cursor.execute("ALTER TABLE cards ADD COLUMN next_review DATE")
     except:
         pass
 
@@ -75,15 +51,21 @@ def init_db():
     conn.close()
 
 def get_connection():
-    conn = sqlite3.connect(DB)
-    conn.row_factory = sqlite3.Row
+    conn = pymysql.connect(
+        host=os.environ.get("MYSQLHOST"),
+        port=int(os.environ.get("MYSQLPORT", 3306)),
+        user=os.environ.get("MYSQLUSER"),
+        password=os.environ.get("MYSQLPASSWORD"),
+        database=os.environ.get("MYSQLDATABASE"),
+        cursorclass=pymysql.cursors.DictCursor
+    )
     return conn
 
 def create_deck(name, description):
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute(
-        "INSERT INTO decks (name, description) VALUES (?, ?)",
+        "INSERT INTO decks (name, description) VALUES (%s, %s)",
         (name, description)
     )
     conn.commit()
@@ -93,7 +75,7 @@ def create_card(deck_id, front, back, front_img="", front_audio=""):
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute(
-        "INSERT INTO cards (deck_id, front, back, next_review, front_img, front_audio) VALUES (?, ?, ?, date('now'), ?, ?)",
+        "INSERT INTO cards (deck_id, front, back, next_review, front_img, front_audio) VALUES (%s, %s, %s, CURDATE(), %s, %s)",
         (deck_id, front, back, front_img, front_audio)
     )
     conn.commit()
@@ -105,7 +87,7 @@ def get_decks():
     cursor.execute("""
         SELECT 
             decks.*, 
-            COUNT(CASE WHEN cards.next_review <= date('now') THEN 1 END) AS due
+            COUNT(CASE WHEN cards.next_review <= CURDATE() THEN 1 END) AS due
         FROM decks
         LEFT JOIN cards 
             ON cards.deck_id = decks.id
@@ -118,7 +100,7 @@ def get_decks():
 def get_cards(deck_id):
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM cards WHERE deck_id = ?", (deck_id,))
+    cursor.execute("SELECT * FROM cards WHERE deck_id = %s", (deck_id,))
     cards = cursor.fetchall()
     conn.close()
     return cards
@@ -126,22 +108,23 @@ def get_cards(deck_id):
 def update_card_review(card_id, quality, deck_id):
     conn = get_connection()
     cursor = conn.cursor()
-    card = cursor.execute("SELECT * FROM cards WHERE id = ?", (card_id,)).fetchone()
+    cursor.execute("SELECT * FROM cards WHERE id = %s", (card_id,))
+    card = cursor.fetchone() 
     new_easiness, new_interval, next_review = sm2(
         card["easiness"], card["interval"], card["repetitions"], quality
     )
     cursor.execute("""
-        UPDATE cards SET easiness=?, interval=?, next_review=?, repetitions=?
-        WHERE id=?
+        UPDATE cards SET easiness=%s, `interval`=%s, next_review=%s, repetitions=%s
+        WHERE id=%s
     """, (new_easiness, new_interval, next_review, card["repetitions"] + 1, card_id))
-    cursor.execute("INSERT INTO review_log (card_id, deck_id) VALUES (?, ?)", (card_id, deck_id))
+    cursor.execute("INSERT INTO review_log (card_id, deck_id) VALUES (%s, %s)", (card_id, deck_id))
     conn.commit()
     conn.close()
 
 def get_due_cards(deck_id):
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM cards WHERE deck_id = ? AND next_review <= date('now')", (deck_id,))
+    cursor.execute("SELECT * FROM cards WHERE deck_id = %s AND next_review <= CURDATE()", (deck_id,))
     cards = cursor.fetchall()
     conn.close()
     return cards
@@ -149,7 +132,7 @@ def get_due_cards(deck_id):
 def update_deck(name, description, deck_id):
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("UPDATE decks SET name = ?, description = ? WHERE id = ?", 
+    cursor.execute("UPDATE decks SET name = %s, description = %s WHERE id = %s", 
         (name, description, deck_id)
     )
     conn.commit()
@@ -158,7 +141,7 @@ def update_deck(name, description, deck_id):
 def update_card(front, back, card_id):
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("UPDATE cards SET front = ?, back = ? WHERE id = ?",
+    cursor.execute("UPDATE cards SET front = %s, back = %s WHERE id = %s",
         (front, back, card_id)
     )
     conn.commit()
@@ -167,15 +150,15 @@ def update_card(front, back, card_id):
 def delete_deck(deck_id):
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("DELETE FROM decks WHERE id = ?", (deck_id,))
-    cursor.execute("DELETE FROM decks WHERE id = ?", (deck_id,))
+    cursor.execute("DELETE FROM decks WHERE id = %s", (deck_id,))
     conn.commit()
     conn.close()
 
 def delete_card(card_id):
     conn = get_connection()
     cursor = conn.cursor()
-    card = cursor.execute("SELECT front_img, front_audio FROM cards WHERE id = ?", (card_id,)).fetchone()
+    cursor.execute("SELECT front_img, front_audio FROM cards WHERE id = %s", (card_id,))
+    card = cursor.fetchone()
 
     if card:
         if card["front_img"] and card["front_img"].startswith("uploads/"):
@@ -191,7 +174,7 @@ def delete_card(card_id):
 
 
 
-    cursor.execute("DELETE FROM cards WHERE id = ?", (card_id,))
+    cursor.execute("DELETE FROM cards WHERE id = %s", (card_id,))
     conn.commit()
     conn.close()
 
