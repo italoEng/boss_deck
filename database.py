@@ -184,7 +184,9 @@ def get_review_heatmap():
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute("""
-        SELECT reviewed_at, COUNT(*) AS total
+        SELECT 
+            DATE_FORMAT(reviewed_at, '%Y-%m-%d') as reviewed_at,
+            COUNT(*) AS total
         FROM review_log
         GROUP BY reviewed_at
         ORDER BY reviewed_at
