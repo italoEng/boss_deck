@@ -117,7 +117,7 @@ def update_card_review(card_id, quality, deck_id):
         UPDATE cards SET easiness=%s, `interval`=%s, next_review=%s, repetitions=%s
         WHERE id=%s
     """, (new_easiness, new_interval, next_review, card["repetitions"] + 1, card_id))
-    cursor.execute("INSERT INTO review_log (card_id, deck_id) VALUES (%s, %s)", (card_id, deck_id))
+    cursor.execute("INSERT INTO review_log (card_id, deck_id, reviewed_at) VALUES (%s, %s, CURDATE())", (card_id, deck_id))
     conn.commit()
     conn.close()
 
