@@ -60,3 +60,16 @@ function buildHeatmap() {
 document.addEventListener('DOMContentLoaded', function() {
     buildHeatmap();
 });
+
+let carouselIndex = 0;
+const cardWidth = 196; // 180px + 16px gap
+
+function scrollCarousel(direction) {
+    const carousel = document.getElementById('carousel');
+    const totalCards = carousel.children.length;
+    const visibleCards = 4;
+    const maxIndex = totalCards - visibleCards;
+
+    carouselIndex = Math.max(0, Math.min(carouselIndex + direction, maxIndex));
+    carousel.scrollTo({ left: carouselIndex * cardWidth, behavior: 'smooth' });
+}
