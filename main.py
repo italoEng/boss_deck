@@ -5,8 +5,8 @@ from werkzeug.utils import secure_filename
 from flask import render_template
 from flask import request
 from flask import redirect
-from database import init_db, create_deck, get_decks, create_card, get_cards, update_card_review, get_due_cards, update_deck, update_card
-from database import delete_deck, delete_card, get_review_heatmap
+from app.database import init_db, create_deck, get_decks, create_card, get_cards, update_card_review, get_due_cards, update_deck, update_card
+from app.database import delete_deck, delete_card, get_review_heatmap
 
 load_dotenv()
 
