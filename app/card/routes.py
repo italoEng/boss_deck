@@ -2,6 +2,7 @@ from flask import Blueprint
 from flask import render_template
 from flask import request
 from flask import redirect
+from flask import current_app
 from app.database import create_card, update_card, get_due_cards, update_card_review, delete_card
 from werkzeug.utils import secure_filename
 import os
@@ -19,7 +20,7 @@ def new_card(deck_id):
         file = request.files["front_img"]
         if file.filename != "":
             filename = secure_filename(file.filename)
-            file.save(os.path.join(card_bp.config["UPLOAD_FOLDER"], filename))
+            file.save(os.path.join(current_app.config["UPLOAD_FOLDER"], filename))
             front_img = f'uploads/{filename}'
     if not front_img:
         front_img = request.form.get("front_img_url", "")
@@ -28,7 +29,7 @@ def new_card(deck_id):
         file = request.files["front_audio"]
         if file.filename != "":
             filename = secure_filename(file.filename)
-            file.save(os.path.join(card_bp.config["UPLOAD_FOLDER"], filename))
+            file.save(os.path.join(current_app.config["UPLOAD_FOLDER"], filename))
             front_audio = f'uploads/{filename}'
 
 

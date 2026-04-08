@@ -150,6 +150,7 @@ def update_card(front, back, card_id):
 def delete_deck(deck_id):
     conn = get_connection()
     cursor = conn.cursor()
+    cursor.execute("DELETE FROM cards WHERE deck_id = %s", (deck_id,))
     cursor.execute("DELETE FROM decks WHERE id = %s", (deck_id,))
     conn.commit()
     conn.close()
