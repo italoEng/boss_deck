@@ -11,10 +11,13 @@ card_bp = Blueprint("card", __name__)
 
 @card_bp.route("/deck/<int:deck_id>/cards/new", methods=["POST"])
 def new_card(deck_id):
-    front = request.form["front"]
-    back = request.form["back"]
+    front = request.form["front"].strip()
+    back = request.form["back"].strip()
     front_img = ""
     front_audio = ""
+
+    if not front and not back:
+        return redirect(f"/deck/{deck_id}?erro=Card+precisa+de+frente+e+verso")
 
     if "front_img" in request.files:
         file = request.files["front_img"]

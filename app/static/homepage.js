@@ -76,3 +76,15 @@ function scrollCarousel(direction) {
     carouselIndex = Math.max(0, Math.min(carouselIndex + direction, maxIndex));
     carousel.scrollTo({ left: carouselIndex * cardWidth, behavior: 'smooth' });
 }
+
+// Mensagem de erro
+window.onload = function() {
+    const erro = document.querySelector('#toast-erro');
+    if (erro) {
+        setTimeout(() => {
+            erro.style.transition = 'opacity 0.5s';
+            erro.style.opacity = '0';
+            setTimeout(() => erro.remove(), 500);
+        }, 3000);
+    }
+}

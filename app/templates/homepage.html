@@ -13,6 +13,16 @@
         <button onclick="toggleEdit()" class="border px-4 py-2 rounded">Editar</button>
     </nav>
 
+    {% if request.args.get('erro') %}
+    <div id="toast-erro" 
+        class="fixed bottom-6 left-1/2 -translate-x-1/2 
+        bg-red-900 text-red-300 border border-red-700 
+        px-5 py-4 rounded-xl text-sm flex items-center gap-3 shadow-lg z-50">
+        <span>⚠️</span>
+        <span>{{ request.args.get('erro') }}</span>
+    </div>
+    {% endif %}
+
     <div class="flex items-center justify-center gap-4 p-8">
 
         <button onclick="scrollCarousel(-1)" class="text-2xl px-2 hover:text-gray-500">

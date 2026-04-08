@@ -16,8 +16,12 @@ def index():
 
 @deck_bp.route("/decks/new", methods=["POST"])
 def new_deck():
-    name = request.form["name"]
-    description = request.form["description"]
+    name = request.form["name"].strip()
+    description = request.form["description"].strip()
+
+    if not name:
+        return redirect("/?erro=Obrigatorio+definir+um+nome+para+deck")
+
     create_deck(name, description)
     return redirect("/")
 
