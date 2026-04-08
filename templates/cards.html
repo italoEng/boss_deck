@@ -9,6 +9,10 @@
 <body>
     <script src="/static/cards.js"></script>
 
+    <nav class="ml-2 mt-2">
+        <a href='/'>Menu</a>
+    </nav>
+
     {% if cards %}
         {% if cards[0]["front_img"] %}
             {% set img = cards[0]["front_img"] %}

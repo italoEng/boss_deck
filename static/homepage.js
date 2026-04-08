@@ -17,6 +17,8 @@ function abrirEditar(id, name, description) {
     document.getElementById('modal-edit').classList.remove('hidden');
 }
 
+
+// Heatmap
 function buildHeatmap() {
     const map = {};
     HEATMAP_DATA.forEach(d => { map[d.reviewed_at] = d.total; });
@@ -61,8 +63,9 @@ document.addEventListener('DOMContentLoaded', function() {
     buildHeatmap();
 });
 
+// Carrocel Deck
 let carouselIndex = 0;
-const cardWidth = 196; // 180px + 16px gap
+const cardWidth = 196;
 
 function scrollCarousel(direction) {
     const carousel = document.getElementById('carousel');
