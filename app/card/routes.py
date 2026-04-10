@@ -4,10 +4,20 @@ from flask import request
 from flask import redirect
 from flask import current_app
 from app.database import create_card, update_card, get_due_cards, update_card_review, delete_card
+from app.database import get_deck
 from werkzeug.utils import secure_filename
 import os
 
 card_bp = Blueprint("card", __name__)
+
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+ALLOWED_AUDIO = {'mp3', 'wav', 'ogg', 'm4a'}
+
+def allowed_image(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def allowed_audio(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_AUDIO
 
 @card_bp.route("/deck/<int:deck_id>/cards/new", methods=["POST"])
 def new_card(deck_id):
@@ -22,6 +32,8 @@ def new_card(deck_id):
     if "front_img" in request.files:
         file = request.files["front_img"]
         if file.filename != "":
+            if not allowed_image(file.filename):
+                return redirect(f"/deck/{deck_id}?erro=Formato+de+imagem+invalido")
             filename = secure_filename(file.filename)
             file.save(os.path.join(current_app.config["UPLOAD_FOLDER"], filename))
             front_img = f'uploads/{filename}'
@@ -31,6 +43,8 @@ def new_card(deck_id):
     if "front_audio" in request.files:
         file = request.files["front_audio"]
         if file.filename != "":
+            if not allowed_audio(file.filename):
+                return redirect(f"/deck/{deck_id}?erro=Formato+de+audio+invalido")
             filename = secure_filename(file.filename)
             file.save(os.path.join(current_app.config["UPLOAD_FOLDER"], filename))
             front_audio = f'uploads/{filename}'
@@ -49,6 +63,11 @@ def editar_card(deck_id, card_id):
 
 @card_bp.route("/deck/<int:deck_id>/cards")
 def cards(deck_id):
+    deck = get_deck(deck_id)
+    
+    if not deck:
+        return redirect("/?erro=Baralho+nao+encontrado")
+    
     cards = get_due_cards(deck_id)
     return render_template("cards.html", cards=cards, deck_id=deck_id)
 

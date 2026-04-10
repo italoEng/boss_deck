@@ -1,11 +1,13 @@
 from flask import Flask
 from dotenv import load_dotenv
 from app.database import init_db
+import os
 
 def create_app():
     load_dotenv()
-
+    
     app = Flask(__name__)
+    app.secret_key = os.environ.get("SECRET_KEY", "dev-key-local")
     app.config["UPLOAD_FOLDER"] = "app/static/uploads"
 
     init_db()

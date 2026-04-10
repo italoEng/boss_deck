@@ -2,9 +2,10 @@ from flask import Blueprint
 from flask import render_template
 from flask import request
 from flask import redirect
-from app.database import create_deck, get_decks, update_deck, delete_deck
+from app.database import create_deck, get_decks, get_deck, update_deck, delete_deck
 from app.database import get_cards, get_due_cards
 from app.database import get_review_heatmap
+
 
 deck_bp = Blueprint("deck", __name__)
 
@@ -39,6 +40,11 @@ def deck_excluir(deck_id):
 
 @deck_bp.route("/deck/<int:deck_id>")
 def deck_view(deck_id):
+    deck = get_deck(deck_id)
+
+    if not deck:
+            return redirect("/?erro=Baralho+nao+encontrado")
+
     cards = get_cards(deck_id)
     due_cards = get_due_cards(deck_id)
     return render_template("decks.html", cards=cards, deck_id=deck_id, due=len(due_cards))

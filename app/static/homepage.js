@@ -71,9 +71,14 @@ function scrollCarousel(direction) {
     const carousel = document.getElementById('carousel');
     const totalCards = carousel.children.length;
     const visibleCards = 4;
-    const maxIndex = totalCards - visibleCards;
+    carouselIndex = carouselIndex + direction;
 
-    carouselIndex = Math.max(0, Math.min(carouselIndex + direction, maxIndex));
+    if (carouselIndex < 0) {
+        carouselIndex = totalCards - visibleCards;
+    } else if (carouselIndex > totalCards - visibleCards) {
+        carouselIndex = 0;
+    }
+
     carousel.scrollTo({ left: carouselIndex * cardWidth, behavior: 'smooth' });
 }
 

@@ -97,6 +97,14 @@ def get_decks():
     conn.close()
     return decks
 
+def get_deck(deck_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM decks WHERE id = %s", (deck_id,))
+    deck = cursor.fetchone()
+    conn.close()
+    return deck
+
 def get_cards(deck_id):
     conn = get_connection()
     cursor = conn.cursor()
