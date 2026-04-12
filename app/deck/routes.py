@@ -22,8 +22,13 @@ def new_deck():
 
     if not name:
         return redirect("/?erro=Obrigatorio+definir+um+nome+para+deck")
+    
+    try:
+        create_deck(name, description)
+    except Exception as e:
+        print(f"Erro ao criar deck: {e}")
+        return redirect("/?erro=Erro+ao+criar+baralho")
 
-    create_deck(name, description)
     return redirect("/")
 
 @deck_bp.route("/deck/<int:deck_id>/edit", methods=["POST"])

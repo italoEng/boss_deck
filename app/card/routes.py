@@ -49,8 +49,12 @@ def new_card(deck_id):
             file.save(os.path.join(current_app.config["UPLOAD_FOLDER"], filename))
             front_audio = f'uploads/{filename}'
 
-
-    create_card(deck_id, front, back, front_img, front_audio)
+    try:
+        create_card(deck_id, front, back, front_img, front_audio)
+    except Exception as e:
+        print(f"Erro ao criar card: {e}")
+        return redirect("/?erro=Erro+ao+criar+card")
+    
     return redirect(f"/deck/{deck_id}#modal-aberto")
 
 @card_bp.route("/deck/<int:deck_id>/cards/<int:card_id>/edit", methods=["POST"])
