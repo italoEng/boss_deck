@@ -11,7 +11,7 @@
 
     <nav class="bg-purple-700 border-b px-8 py-4 flex justify-between items-center">
         <h2>Boss Deck</h2>
-        <button class="group" onclick="toggleEdit()">
+        <button class="group" onclick="toggleEdit()" title="Editar">
         <iconify-icon
             icon="line-md:cog"
             width="32"
@@ -40,7 +40,7 @@
         <!-- novo baralho -->
         <div onclick="document.getElementById('modal').classList.remove('hidden')" 
             class="border-2 border-dashed rounded-xl flex items-center justify-center cursor-pointer hover:bg-gray-100 flex-shrink-0"
-            style="width:180px; height:240px">
+            style="width:180px; height:240px" title="Novo Deck">
                 <iconify-icon
                     icon = "line-md:folder-plus-filled"
                     width = "32"
@@ -58,7 +58,14 @@
                 style="width:180px; height:240px">
                 <h2 class="font-bold text-lg flex items-center justify-center">
                     {{ deck["name"] }}
-                    {% if deck["due"] == 0 %} ✅ {% endif %}
+                    {% if deck["due"] == 0 %}
+                        <iconify-icon
+                            icon = "tabler:checkbox"
+                            width = "24"
+                            style = "color: rgb(4, 172, 4);"
+                            class = "text-black">
+                        </iconify-icon> 
+                    {% endif %}
                 </h2>
                 <p class="text-gray-500 text-sm flex items-center justify-center">
                     {{ deck["description"] }}
@@ -69,14 +76,25 @@
                     <!-- Edit Deck -->
                     <button 
                         onclick="event.stopPropagation(); abrirEditar({{ deck['id'] }}, '{{ deck['name'] }}', '{{ deck['description'] }}'); return false" 
-                        class="bg-yellow-400 text-white px-2 py-1 rounded text-sm">✏️
+                        class="bg-yellow-400 text-white px-2 py-1 rounded text-sm">
+                        <iconify-icon
+                            icon="tabler:pencil"
+                            width="20"
+                            class="text-black transition duration-300">
+                        </iconify-icon>
                     </button>
 
                     <!-- Excluir Deck -->
                     <form action="/deck/{{ deck['id'] }}/delete" method="POST" 
                         onclick="event.stopPropagation()"
                         onsubmit="confirmarexclusao(event)">
-                        <button type="submit" class="bg-red-500 text-white px-2 py-1 rounded text-sm">🗑</button>
+                        <button type="submit" class="bg-red-500 text-white px-2 py-1 rounded text-sm">
+                            <iconify-icon
+                                icon="mage:trash"
+                                width="20"
+                                class="text-black transition duration-300">
+                            </iconify-icon>
+                        </button>
                     </form>
 
                 </div>

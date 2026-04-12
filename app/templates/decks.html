@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
 </head>
 <body>
     <script src="/static/decks.js"></script>
@@ -12,7 +13,13 @@
 
 
     <nav class="bg-purple-700 border-b px-8 py-4">
-        <a href="/">Menu</a>
+        <a href='/' title="Início">
+            <iconify-icon
+                icon="tabler:home-2-filled"
+                width="32"
+                class="text-black">
+            </iconify-icon>
+        </a>
     </nav>
 
     <h1 class="text-center">Deck (add nome): {{ deck_id }}</h1>
