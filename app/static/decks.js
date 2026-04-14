@@ -51,7 +51,8 @@ window.onload = function() {
         modules: {
             toolbar: [
                 ['bold', 'italic', 'underline'],
-                ['formula']
+                [{ 'color': [] }, { 'background': [] }],
+                ['formula',  { 'script': 'sub' }, { 'script': 'super' }, 'code-block'],
             ]
         }
     });
@@ -61,8 +62,10 @@ window.onload = function() {
         placeholder: 'Verso do card...',
         modules: {
             toolbar: [
-                ['bold', 'italic', 'underline'],
-                ['formula']
+                ['bold', 'italic', 'underline','formula'],
+                [{ 'color': [] }, { 'background': [] }],
+                [{ 'script': 'sub' }, { 'script': 'super' }],
+                ['code-block'],
             ]
         }
     });
