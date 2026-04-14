@@ -6,6 +6,8 @@
     <title>Document</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 </head>
 <body>
     <script src="/static/cards.js"></script>
@@ -16,7 +18,10 @@
             <iconify-icon
                 icon="tabler:home-2-filled"
                 width="32"
-                class="text-black">
+                class="text-black-500 hover:text-red-500 transition-all"
+                style="transition: transform 0.2s; display:inline-block"
+                onmouseover="this.style.transform='scale(1.2)'"
+                onmouseout="this.style.transform='scale(1)'">
             </iconify-icon>
         </a>
     </nav>

@@ -47,15 +47,27 @@ window.onload = function() {
     // rich text editor
     window.quillFront = new Quill('#editor-front', {
         theme: 'snow',
-        placeholder: 'Frente do card...'
+        placeholder: 'Frente do card...',
+        modules: {
+            toolbar: [
+                ['bold', 'italic', 'underline'],
+                ['formula']
+            ]
+        }
     });
 
     window.quillBack = new Quill('#editor-back', {
         theme: 'snow',
-        placeholder: 'Verso do card...'
+        placeholder: 'Verso do card...',
+        modules: {
+            toolbar: [
+                ['bold', 'italic', 'underline'],
+                ['formula']
+            ]
+        }
     });
 
-    document.querySelector('form').addEventListener('submit', function() {
+    document.getElementById('form-novo-card').addEventListener('submit', function() {
         document.getElementById('front-hidden').value = quillFront.root.innerHTML;
         document.getElementById('back-hidden').value = quillBack.root.innerHTML;
     });
