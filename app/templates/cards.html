@@ -42,15 +42,22 @@
                 <audio id="audio-card" autoplay src="/static/{{ cards[0]['front_audio'] }}"></audio>
                 <button onclick="document.getElementById('audio-card').play()" 
                     class="border mt-4 px-4 py-2 rounded hover:bg-gray-100">
-                    🔊
+                    <iconify-icon
+                        icon="tabler:volume"
+                        width="32"
+                        class="text-black-500 transition-all"
+                        style="transition: transform 0.2s; display:inline-block">
+                    </iconify-icon>
                 </button>
             {% endif %}
 
-            <p class="text-center text-3xl mt-4">{{ cards[0]["front"] | safe }}</p>
+            <div class="text-center text-3xl mt-4">
+                {{ cards[0]["front"] | safe }}
+            </div>
         </div>
 
-        <div id="verso" style="display:none" class="flex justify-center">
-            <p class="text-center text-3xl mt-4">{{ cards[0]["back"] | safe }}</p>
+        <div id="verso" style="display:none" class="flex justify-center text-3xl mt-4">
+            {{ cards[0]["back"] | safe }}
         </div>
 
         <div class="flex justify-center m-4">
