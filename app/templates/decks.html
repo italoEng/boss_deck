@@ -53,65 +53,87 @@
 
     <!-- Botoes -->
     <div class="flex gap-4 px-8 mb-6">
+
         <!-- Novo card -->
         <div onclick="document.getElementById('modal').classList.remove('hidden')" 
-            class="bg-white shadow rounded-xl p-6 flex items-center justify-center cursor-pointer hover:scale-105 transition w-20 h-20">
-            <span class="text-3xl text-gray-400">+</span>
+            class="bg-white shadow rounded-xl p-6 
+            flex items-center justify-center cursor-pointer hover:scale-105 transition w-20 h-20">
+            <iconify-icon
+                icon="mage:plus"
+                width="30"
+                class="text-black transition duration-300 group-hover:text-red-500">
+            </iconify-icon>
         </div>
 
         <!-- Iniciar -->
         <a href='/deck/{{ deck_id }}/cards'
-            class="bg-purple-600 text-white px-6 py-4 rounded-xl shadow hover:bg-purple-700 transition">
-            ▶ Iniciar
+            class="group bg-purple-700 shadow rounded-xl p-6 
+            flex items-center justify-center cursor-pointer hover:scale-105 transition w-20 h-20">
+            <iconify-icon
+                icon="mage:play-fill"
+                width="30"
+                class="text-black transition duration-300 group-hover:text-red-500">
+            </iconify-icon>
         </a>
 
         <!-- Editar -->
         <button onclick="toggleLista()"
-            class="bg-gray-200 px-6 py-4 rounded-xl hover:bg-gray-300 transition">
+            class="group bg-gray-100 shadow rounded-xl p-6 
+            flex items-center justify-center cursor-pointer hover:scale-105 transition w-20 h-20">
             <iconify-icon
                 icon="tabler:pencil"
                 width="30"
-                class="text-black transition duration-300">
+                class="text-black transition duration-300 group-hover:text-red-500">
             </iconify-icon>
         </button>
     </div>
 
 
     <div id ="lista" class="hidden p-8">
-        <table class="w-full border-collapse">
-            <thead>
-                <tr class="bg-gray-100">
-                    <th class="border p-2 text-left">id</th>
-                    <th class="border p-2 text-left">Frente</th>
-                    <th class="border p-2 text-left">Verso</th>
-                    <th class="border p-2 text-left">Editar</th>
-                    <th class="border p-2 text-left">Excluir</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for card in cards %}
-            <tr class="hover:bg-gray-200 transition">
-                <td class="border p-2">{{ card["id"]}}</td>
-                <td class="border p-2">{{ card["front"] | safe }}</td>
-                <td class="border p-2">{{ card["back"] | safe }}</td>
-                <td class="border p-2">
-                    <button onclick="abrirEditarCard({{ card['id'] }}, '{{ card['front'] }}', '{{ card['back'] }}')"
-                        class="bg-yellow-400 text-white px-2 py-1 rounded text-sm">
-                        ✏️
-                    </button>
-                </td>
-                <td class="border p-2">
-                    <form action="/deck/{{ deck_id }}/cards/{{ card['id'] }}/delete" onsubmit="confirmarexclusao(event)" method="POST">
-                        <button type="submit" 
-                            class="bg-red-500 text-white px-2 py-1 rounded text-sm">
-                            🗑
+        <div class="bg-white rounded-xl shadow overflow-hidden"></div>
+            <table class="w-full">
+                <thead class="bg-gray-100 text-gray-600 text-sm">
+                    <tr class="bg-gray-100">
+                        <th class="border p-2 text-left">id</th>
+                        <th class="border p-2 text-left">Frente</th>
+                        <th class="border p-2 text-left">Verso</th>
+                        <th class="border p-2 text-left">Editar</th>
+                        <th class="border p-2 text-left">Excluir</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for card in cards %}
+                <tr class="hover:bg-gray-200 transition">
+                    <td class="border p-2">{{ card["id"]}}</td>
+                    <td class="border p-2">{{ card["front"] | safe }}</td>
+                    <td class="border p-2 text-gray-600">{{ card["back"] | safe }}</td>
+                    <td class="border p-2">
+                        <button onclick="abrirEditarCard({{ card['id'] }}, '{{ card['front'] }}', '{{ card['back'] }}')"
+                            class="px-2 py-1 rounded-lg">
+                            <iconify-icon
+                                icon="tabler:pencil"
+                                width="20"
+                                class="text-black transition duration-300">
+                            </iconify-icon>
                         </button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+                    </td>
+                    <td class="border p-2">
+                        <form action="/deck/{{ deck_id }}/cards/{{ card['id'] }}/delete" onsubmit="confirmarexclusao(event)" method="POST">
+                            <button type="submit" 
+                                class="px-2 py-1 rounded text-sm">
+                                <iconify-icon
+                                    icon="mage:trash"
+                                    width="20"
+                                    class="text-red-500 transition duration-300">
+                                </iconify-icon>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 
 
