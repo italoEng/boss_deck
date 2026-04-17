@@ -18,7 +18,7 @@
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 
 </head>
-<body>
+<body class="bg-gray-100">
     <script src="/static/decks.js"></script>
     <script>const DECK_ID = {{ deck_id }};</script>
 
@@ -36,30 +36,46 @@
         </a>
     </nav>
 
-    <h1 class="text-center">Deck (add nome): {{ deck_id }}</h1>
+    <div class="px-8 py-6">
+        <h1 class="text-3xl font-bold text-gray-800">
+            Deck {{ deck_id }}
+        </h1>
 
-    <div class="flex items-center gap-4 p-8">
+        <div class="flex gap-3 mt-2 text-sm">
+            <span class="bg-gray-200 px-3 py-1 rounded-lg">
+                {{cards | length}} cards
+            </span>
+            <span class="bg-purple-200 px-3 py-1 rounded-lg">
+                {{due}} para revisar
+            </span>
+        </div>
+    </div>
+
+    <!-- Botoes -->
+    <div class="flex gap-4 px-8 mb-6">
+        <!-- Novo card -->
         <div onclick="document.getElementById('modal').classList.remove('hidden')" 
-            class="border-2 border-dashed rounded-lg p-6 flex items-center justify-center cursor-pointer hover:bg-gray-100">
-            <span class="text-4xl text-gray-400">+</span>
+            class="bg-white shadow rounded-xl p-6 flex items-center justify-center cursor-pointer hover:scale-105 transition w-20 h-20">
+            <span class="text-3xl text-gray-400">+</span>
         </div>
 
-    <a href='/deck/{{ deck_id }}/cards'
-        class="flex items-center gap-4 p-8 border-2 hover:bg-green-300 cursor-pointer">
-        Iniciar
-    </a>
+        <!-- Iniciar -->
+        <a href='/deck/{{ deck_id }}/cards'
+            class="bg-purple-600 text-white px-6 py-4 rounded-xl shadow hover:bg-purple-700 transition">
+            ▶ Iniciar
+        </a>
 
-    
-    
-    <button onclick="toggleLista()"
-        class="flex items-center gap-4 p-8 border-2 hover:bg-orange-300 cursor-pointer">
-        Editar Cards
-    </button>
-
-
-        <p>Total de cards: {{cards | length}}</p>
-        <p>Cards para revisar: {{due}}</p>
+        <!-- Editar -->
+        <button onclick="toggleLista()"
+            class="bg-gray-200 px-6 py-4 rounded-xl hover:bg-gray-300 transition">
+            <iconify-icon
+                icon="tabler:pencil"
+                width="30"
+                class="text-black transition duration-300">
+            </iconify-icon>
+        </button>
     </div>
+
 
     <div id ="lista" class="hidden p-8">
         <table class="w-full border-collapse">
@@ -74,7 +90,7 @@
             </thead>
             <tbody>
             {% for card in cards %}
-            <tr class="hover:bg-gray-50">
+            <tr class="hover:bg-gray-200 transition">
                 <td class="border p-2">{{ card["id"]}}</td>
                 <td class="border p-2">{{ card["front"] | safe }}</td>
                 <td class="border p-2">{{ card["back"] | safe }}</td>
