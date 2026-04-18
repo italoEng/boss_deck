@@ -100,18 +100,36 @@ def get_decks():
 def get_deck(deck_id):
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM decks WHERE id = %s", (deck_id,))
+    cursor.execute("""
+        SELECT * 
+        FROM decks 
+        WHERE id = %s
+    """, (deck_id,))
     deck = cursor.fetchone()
     conn.close()
     return deck
 
-def get_cards(deck_id):
+def get_cards(deck_id, page=1, per_page=20):
+    offset = (page - 1) * per_page
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM cards WHERE deck_id = %s", (deck_id,))
+    cursor.execute("""
+        SELECT * 
+        FROM cards 
+        WHERE deck_id = %s
+        LIMIT %s OFFSET %s
+    """, (deck_id, per_page, offset))
     cards = cursor.fetchall()
     conn.close()
     return cards
+
+def count_cards(deck_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT COUNT(*) as total FROM cards WHERE deck_id = %s", (deck_id,))
+    result = cursor.fetchone()
+    conn.close()
+    return result["total"]
 
 def update_card_review(card_id, quality, deck_id):
     conn = get_connection()

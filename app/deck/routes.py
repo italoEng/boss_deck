@@ -3,7 +3,7 @@ from flask import render_template
 from flask import request
 from flask import redirect
 from app.database import create_deck, get_decks, get_deck, update_deck, delete_deck
-from app.database import get_cards, get_due_cards
+from app.database import get_cards, get_due_cards, count_cards
 from app.database import get_review_heatmap
 
 
@@ -50,6 +50,20 @@ def deck_view(deck_id):
     if not deck:
             return redirect("/?erro=Baralho+nao+encontrado")
 
-    cards = get_cards(deck_id)
+    page = request.args.get('page', 1, type=int)
+    per_page = 20
+    cards = get_cards(deck_id, page=page, per_page=per_page)
+    total = count_cards(deck_id)
+    total_pages = (total + per_page - 1) // per_page
     due_cards = get_due_cards(deck_id)
-    return render_template("decks.html", cards=cards, deck_id=deck_id, due=len(due_cards))
+    lista_aberta = request.args.get('lista') == '1' or request.args.get('page') is not None
+
+    return render_template("decks.html", 
+        cards=cards, 
+        deck_id=deck_id, 
+        due=len(due_cards),
+        page=page,
+        total_pages=total_pages,
+        lista_aberta=lista_aberta,
+        total_cards=total
+    )

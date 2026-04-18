@@ -1,29 +1,22 @@
 function toggleLista() {
-    const lista = document.getElementById('lista');
-    if (lista.style.display === 'none' || lista.style.display === '') {
-        lista.style.display = 'block';
-    } else {
-        lista.style.display = 'none';
-    }
+    document.getElementById('lista').classList.toggle('hidden');
 }
 
-//window.onload = function() {
-//    if (window.location.hash === '#lista') {
-//        document.getElementById('lista').style.display = 'block';
-//    }
-//}
 
+// Lista
 window.onload = function() {
-    if (window.location.hash === '#lista') {
-        document.getElementById('lista').style.display = 'block';
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('page') || urlParams.get('lista')) {
+        document.getElementById('lista').classList.remove('hidden');
     }
+    
     if (window.location.hash === '#modal-aberto') {
         document.getElementById('modal').classList.remove('hidden');
     }
 }
 
 function confirmarexclusao(event) {
-    if(!confirm("Tem certeza que deseja excluir este card?")) {
+    if (!confirm("Tem certeza que deseja excluir este card?")) {
         event.preventDefault();
     }
 }
