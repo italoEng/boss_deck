@@ -25,13 +25,16 @@ function buildHeatmap() {
 
     const container = document.getElementById('heatmap');
     container.innerHTML = '';
-    container.style.display = 'grid';
-    container.style.gridTemplateRows = 'repeat(7, 12px)';
-    container.style.gridAutoFlow = 'column';
-    container.style.gridAutoColumns = '12px';
-    container.style.gap = '5px';
+
+    // GRID (Tailwind)
+    container.className = `
+        grid grid-rows-7 grid-flow-col auto-cols-[14px] gap-1
+        overflow-visible
+    `;
 
     const today = new Date();
+    const todayKey = today.toISOString().slice(0, 10);
+
     const start = new Date(today.getFullYear(), 0, 1);
     const end = new Date(today.getFullYear(), 11, 31);
     const diffDays = Math.floor((end - start) / (1000 * 60 * 60 * 24));
@@ -43,19 +46,68 @@ function buildHeatmap() {
         const key = date.toISOString().slice(0, 10);
         const count = map[key] || 0;
 
+        // WRAPPER (necessário pro tooltip)
+        const wrapper = document.createElement('div');
+        wrapper.className = 'relative group';
+
+        // BOX
         const box = document.createElement('div');
-        box.style.width = '12px';
-        box.style.height = '12px';
-        box.style.borderRadius = '2px';
-        box.title = `${key}: ${count} revisões`;
+        box.className = `
+            w-3 h-3 rounded-sm 
+            transition-all duration-200 
+            hover:scale-125 hover:ring-1 hover:ring-white/40
+            border border-white/5
+        `;
 
-        if (count === 0)       box.style.background = '#ebedf0';
-        else if (count < 5)    box.style.background = '#9be9a8';
-        else if (count < 10)   box.style.background = '#40c463';
-        else if (count < 20)   box.style.background = '#30a14e';
-        else                   box.style.background = '#216e39';
+        // HOJE
+        if (key === todayKey) {
+            box.classList.add('ring-2', 'ring-red-400');
+        }
 
-        container.appendChild(box);
+        // CORES
+        if (count === 0)       box.classList.add('bg-zinc-200');
+        else if (count < 5)    box.classList.add('bg-purple-900');
+        else if (count < 10)   box.classList.add('bg-purple-700');
+        else if (count < 20)   box.classList.add('bg-purple-500');
+        else                   box.classList.add('bg-purple-400');
+
+        // TOOLTIP
+        const tooltip = document.createElement('div');
+        tooltip.className = `
+            absolute bottom-5 left-1/2 -translate-x-1/2
+            hidden group-hover:flex
+            flex-col items-center
+            bg-zinc-900 text-white text-[10px]
+            px-2 py-1 rounded-md shadow-lg
+            whitespace-nowrap z-50
+            pointer-events-none
+            opacity-0 scale-75
+            group-hover:opacity-100 group-hover:scale-100
+            transition-all duration-200
+        `;
+
+        // DATA FORMATADA
+        const formattedDate = date.toLocaleDateString('pt-BR', {
+            weekday: 'short',
+            day: '2-digit',
+            month: 'short'
+        });
+
+        tooltip.innerText = `${count} revisões\n${formattedDate}`;
+
+        // SETINHA
+        const arrow = document.createElement('div');
+        arrow.className = `
+            absolute top-full left-1/2 -translate-x-1/2
+            w-2 h-2 bg-zinc-900 rotate-45
+        `;
+
+        tooltip.appendChild(arrow);
+
+        
+        wrapper.appendChild(box);
+        wrapper.appendChild(tooltip);
+        container.appendChild(wrapper);
     }
 }
 
