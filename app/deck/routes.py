@@ -65,7 +65,8 @@ def deck_view(deck_id):
 
     return render_template("decks.html", 
         cards=cards, 
-        deck_id=deck_id, 
+        deck_id=deck_id,
+        deck=deck,
         due=len(due_cards),
         page=page,
         total_pages=total_pages,

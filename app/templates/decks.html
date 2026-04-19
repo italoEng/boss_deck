@@ -38,7 +38,7 @@
 
     <div class="px-8 py-6">
         <h1 class="text-3xl font-bold text-gray-800">
-            Deck {{ deck_id }}
+            {{ deck["name"] }}
         </h1>
 
         <div class="flex gap-3 mt-2 text-sm">
@@ -182,11 +182,6 @@
                     <div id="editor-back" style="height:100px" class="mb-4"></div>
                     <input type="hidden" name="back" id="back-hidden">
 
-                    <label class="border w-full rounded-lg p-4 flex items-center justify-center cursor-pointer hover:bg-gray-100 mb-4">
-                        <span class="text-gray-400">Clique para adicionar uma imagem</span>
-                        <input type="file" name="front_img" accept="image/*" class="hidden">
-                    </label>
-                    <p class="text-center text-gray-400 text-sm my-2">ou</p>
                     <input type="text" name="front_img_url" placeholder="URL da imagem" class="border w-full p-2 rounded mb-3">
                     <label class="border w-full rounded-lg p-4 flex items-center justify-center cursor-pointer hover:bg-gray-100 mb-4">
                         <span class="text-gray-400">🎵 Clique para adicionar áudio</span>

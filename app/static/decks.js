@@ -46,6 +46,7 @@ window.onload = function() {
                 ['bold', 'italic', 'underline'],
                 [{ 'color': [] }, { 'background': [] }],
                 ['formula',  { 'script': 'sub' }, { 'script': 'super' }, 'code-block'],
+                ['image'],
             ]
         }
     });
@@ -58,6 +59,7 @@ window.onload = function() {
                 ['bold', 'italic', 'underline','formula'],
                 [{ 'color': [] }, { 'background': [] }],
                 ['formula',  { 'script': 'sub' }, { 'script': 'super' }, 'code-block'],
+                ['image'],
             ]
         }
     });
@@ -67,3 +69,4 @@ window.onload = function() {
         document.getElementById('back-hidden').value = quillBack.root.innerHTML;
     });
 }
+
