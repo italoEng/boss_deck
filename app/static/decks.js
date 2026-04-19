@@ -57,8 +57,7 @@ window.onload = function() {
             toolbar: [
                 ['bold', 'italic', 'underline','formula'],
                 [{ 'color': [] }, { 'background': [] }],
-                [{ 'script': 'sub' }, { 'script': 'super' }],
-                ['code-block'],
+                ['formula',  { 'script': 'sub' }, { 'script': 'super' }, 'code-block'],
             ]
         }
     });
