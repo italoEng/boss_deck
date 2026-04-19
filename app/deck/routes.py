@@ -58,6 +58,11 @@ def deck_view(deck_id):
     due_cards = get_due_cards(deck_id)
     lista_aberta = request.args.get('lista') == '1' or request.args.get('page') is not None
 
+    if page < 1:
+        page = 1
+    if page > total_pages and total_pages > 0:
+        page = total_pages
+
     return render_template("decks.html", 
         cards=cards, 
         deck_id=deck_id, 

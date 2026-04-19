@@ -11,6 +11,26 @@ def init_db():
     conn = get_connection()
     cursor = conn.cursor()
 
+    try:
+        cursor.execute("CREATE INDEX idx_cards_deck_id ON cards(deck_id)")
+    except:
+        pass
+
+    try:
+        cursor.execute("CREATE INDEX idx_cards_next_review ON cards(next_review)")
+    except:
+        pass
+
+    try:
+        cursor.execute("CREATE INDEX idx_review_log_reviewed_at ON review_log(reviewed_at)")
+    except:
+        pass
+
+    try:
+        cursor.execute("CREATE INDEX idx_review_log_deck_id ON review_log(deck_id)")
+    except:
+        pass
+
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS decks (
             id          INTEGER PRIMARY KEY AUTO_INCREMENT,
