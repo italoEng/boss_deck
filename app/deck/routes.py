@@ -2,8 +2,10 @@ from flask import Blueprint
 from flask import render_template
 from flask import request
 from flask import redirect
+import csv
+import io
 from app.database import create_deck, get_decks, get_deck, update_deck, delete_deck
-from app.database import get_cards, get_due_cards, count_cards
+from app.database import get_cards, get_due_cards, count_cards, create_cards_bulk
 from app.database import get_review_heatmap
 
 
@@ -73,3 +75,31 @@ def deck_view(deck_id):
         lista_aberta=lista_aberta,
         total_cards=total
     )
+
+@deck_bp.route("/deck/<int:deck_id>/cards/import", methods=["POST"])
+def import_cards(deck_id):
+    if "csv_file" not in request.files:
+        return redirect(f"/deck/{deck_id}?erro=Arquivo+nao+encontrado")
+    
+    file = request.files["csv_file"]
+    if file.filename == "" or not file.filename.endswith(".csv"):
+        return redirect(f"/deck/{deck_id}?erro=Arquivo+invalido")
+    
+    try:
+        content = file.read().decode("utf-8")
+        reader = csv.DictReader(io.StringIO(content))
+        cards_list = []
+        for row in reader:
+            if row.get("front") and row.get("back"):
+                cards_list.append({
+                    "front": row["front"],
+                    "back": row["back"],
+                    "front_img": row.get("front_img", ""),
+                    "front_audio": row.get("front_audio", "")
+                })
+        create_cards_bulk(deck_id, cards_list)
+        return redirect(f"/deck/{deck_id}?sucesso={len(cards_list)}+cards+importados")
+    except Exception as e:
+        print(f"Erro ao importar CSV: {e}")
+        
+        return redirect(f"/deck/{deck_id}?erro=Erro+ao+importar+CSV")

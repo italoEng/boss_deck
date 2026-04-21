@@ -22,11 +22,14 @@ function confirmarexclusao(event) {
 }
 
 function abrirEditarCard(id, front, back) {
-    document.getElementById('edit-front').value = front;
-    document.getElementById('edit-back').value = back;
+    //document.getElementById('edit-front').value = front;
+    //document.getElementById('edit-back').value = back;
+    quillEditFront.root.innerHTML = front;
+    quillEditBack.root.innerHTML = back;
     document.getElementById('form-edit-card').action = `/deck/${DECK_ID}/cards/${id}/edit`;
     document.getElementById('modal-edit-card').classList.remove('hidden');
 }
+
 
 // rich text editor
 window.onload = function() {
@@ -68,5 +71,36 @@ window.onload = function() {
         document.getElementById('front-hidden').value = quillFront.root.innerHTML;
         document.getElementById('back-hidden').value = quillBack.root.innerHTML;
     });
-}
 
+    window.quillEditFront = new Quill('#editor-edit-front', {
+        theme: 'snow',
+        placeholder: 'Frente do card...',
+        modules: {
+            toolbar: [
+                ['bold', 'italic', 'underline'],
+                [{ 'color': [] }, { 'background': [] }],
+                ['formula', { 'script': 'sub' }, { 'script': 'super' }, 'code-block'],
+                ['image'],
+            ]
+        }
+    });
+
+    window.quillEditBack = new Quill('#editor-edit-back', {
+        theme: 'snow',
+        placeholder: 'Verso do card...',
+        modules: {
+            toolbar: [
+                ['bold', 'italic', 'underline'],
+                [{ 'color': [] }, { 'background': [] }],
+                ['formula', { 'script': 'sub' }, { 'script': 'super' }, 'code-block'],
+                ['image'],
+            ]
+        }
+    });
+
+    document.getElementById('form-edit-card').addEventListener('submit', function() {
+        document.getElementById('edit-front-hidden').value = quillEditFront.root.innerHTML;
+        document.getElementById('edit-back-hidden').value = quillEditBack.root.innerHTML;
+    });
+
+}

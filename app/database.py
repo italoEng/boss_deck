@@ -243,6 +243,21 @@ def get_review_heatmap():
     conn.close()
     return data
 
+# csv
+def create_cards_bulk(deck_id, cards_list):
+    conn = get_connection()
+    cursor = conn.cursor()
+    for card in cards_list:
+        cursor.execute(
+            """INSERT INTO cards (deck_id, front, back, next_review, front_img, front_audio) 
+               VALUES (%s, %s, %s, CURDATE(), %s, %s)""",
+            (deck_id, card["front"], card["back"], 
+             card.get("front_img", ""), card.get("front_audio", ""))
+        )
+    conn.commit()
+    conn.close()
+
+    
 if __name__ == "__main__":
     init_db()
     print("Banco iniciado!")

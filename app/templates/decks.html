@@ -86,6 +86,20 @@
                 class="text-black transition duration-300 group-hover:text-red-500">
             </iconify-icon>
         </button>
+
+        <!-- Importar CSV -->
+        <label class="group bg-gray-100 shadow rounded-xl p-6 
+            flex items-center justify-center cursor-pointer hover:scale-105 transition w-20 h-20">
+            <iconify-icon
+                icon="mage:file-upload"
+                width="30"
+                class="text-black transition duration-300">
+            </iconify-icon>
+            <form id="form-csv" action="/deck/{{ deck_id }}/cards/import" method="POST" enctype="multipart/form-data">
+                <input type="file" name="csv_file" accept=".csv" class="hidden"
+                    onchange="document.getElementById('form-csv').submit()">
+            </form>
+        </label>
     </div>
 
 
@@ -195,11 +209,17 @@
     </div>
 
     <div id="modal-edit-card" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-        <div class="bg-white rounded-lg p-12 w-96">
+        <div class="bg-white rounded-lg p-12 w-150">
             <h2 class="font-bold text-xl mb-4">Editar Card</h2>
             <form id="form-edit-card" method="POST">
-                <input type="text" id="edit-front" name="front" placeholder="Frente" class="border w-full p-2 rounded mb-3">
-                <input type="text" id="edit-back" name="back" placeholder="Verso" class="border w-full p-2 rounded mb-4">
+                <label class="text-sm text-gray-500 mb-1 block">Frente</label>
+                <div id="editor-edit-front" style="height:100px" class="mb-3"></div>
+                <input type="hidden" name="front" id="edit-front-hidden">
+
+                <label class="text-sm text-gray-500 mb-1 block">Verso</label>
+                <div id="editor-edit-back" style="height:100px" class="mb-4"></div>
+                <input type="hidden" name="back" id="edit-back-hidden">
+
                 <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded w-full">Salvar</button>
             </form>
             <button onclick="document.getElementById('modal-edit-card').classList.add('hidden')"
