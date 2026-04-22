@@ -4,7 +4,7 @@ from flask import request
 from flask import redirect
 import csv
 import io
-from app.database import create_deck, get_decks, get_deck, update_deck, delete_deck
+from app.database import create_deck, get_decks, get_deck, update_deck, delete_deck, get_deck_stats
 from app.database import get_cards, get_due_cards, count_cards, create_cards_bulk
 from app.database import get_review_heatmap
 
@@ -59,6 +59,7 @@ def deck_view(deck_id):
     total_pages = (total + per_page - 1) // per_page
     due_cards = get_due_cards(deck_id)
     lista_aberta = request.args.get('lista') == '1' or request.args.get('page') is not None
+    stats = get_deck_stats(deck_id)
 
     if page < 1:
         page = 1
@@ -73,7 +74,8 @@ def deck_view(deck_id):
         page=page,
         total_pages=total_pages,
         lista_aberta=lista_aberta,
-        total_cards=total
+        total_cards=total,
+        stats=stats
     )
 
 @deck_bp.route("/deck/<int:deck_id>/cards/import", methods=["POST"])

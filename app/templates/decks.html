@@ -48,8 +48,21 @@
             <span class="bg-purple-200 px-3 py-1 rounded-lg">
                 {{due}} para revisar
             </span>
+            <span class="bg-green-200 px-3 py-1 rounded-lg">
+                {{ stats["mastered"] }} dominados
+            </span>
+            <span class="bg-yellow-200 px-3 py-1 rounded-lg">
+                {% if stats["avg_easiness"] >= 2.5 %}
+                    Nivel: 😊 Fácil
+                {% elif stats["avg_easiness"] >= 2.0 %}
+                    Nivel: 😐 Médio
+                {% else %}
+                    Nivel: 😓 Difícil
+                {% endif %}
+            </span>
         </div>
     </div>
+
 
     <!-- Botoes -->
     <div class="flex gap-4 px-8 mb-6">

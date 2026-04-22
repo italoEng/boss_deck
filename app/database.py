@@ -112,17 +112,34 @@ def get_decks():
         LEFT JOIN cards 
             ON cards.deck_id = decks.id
         GROUP BY decks.id
+        ORDER BY due DESC
     """)
     decks = cursor.fetchall()
     conn.close()
     return decks
+
+def get_deck_stats(deck_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT
+            COUNT(*) AS total,
+            SUM(CASE WHEN next_review <= CURDATE() THEN 1 ELSE 0 END) AS due,
+            SUM(CASE WHEN repetitions >= 5 AND `interval` >= 21 THEN 1 ELSE 0 END) AS mastered,
+            ROUND(AVG(easiness), 2) AS avg_easiness
+        FROM cards
+        WHERE deck_id = %s
+    """, (deck_id,))
+    stats = cursor.fetchone()
+    conn.close()
+    return stats
 
 def get_deck(deck_id):
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute("""
         SELECT * 
-        FROM decks 
+        FROM decks
         WHERE id = %s
     """, (deck_id,))
     deck = cursor.fetchone()
