@@ -55,11 +55,29 @@
                 {% set avg = stats.get("avg_easiness", 0) | float %}
                 
                 {% if avg >= 2.5 %}
-                    Nivel: 😊 Fácil
+                    <div class="flex justify-center">
+                        <iconify-icon
+                            icon="tabler:mood-tongue-wink-2"
+                            width="25"
+                            class="text-black-500">
+                        </iconify-icon>
+                    </div>
                 {% elif avg >= 2.0 %}
-                    Nivel: 😐 Médio
+                    <div class="flex justify-center">
+                        <iconify-icon
+                            icon="tabler:mood-empty"
+                            width="25"
+                            class="text-black-500">
+                        </iconify-icon>
+                    </div>
                 {% else %}
-                    Nivel: 😓 Difícil
+                    <div class="flex justify-center">
+                        <iconify-icon
+                            icon="tabler:mood-wrrr"
+                            width="25"
+                            class="text-black-500">
+                        </iconify-icon>
+                    </div>
                 {% endif %}
             </span>
         </div>
@@ -246,22 +264,40 @@
         </div>
     </div>
 
-    <div id="modal-edit-card" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-        <div class="bg-white rounded-lg p-12 w-150">
-            <h2 class="font-bold text-xl mb-4">Editar Card</h2>
+    <div id="modal-edit-card" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+        <div class="bg-white w-full max-w-2xl rounded-2xl shadow-xl p-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Editar Card</h2>
+            
             <form id="form-edit-card" method="POST">
-                <label class="text-sm text-gray-500 mb-1 block">Frente</label>
-                <div id="editor-edit-front" style="height:100px" class="mb-3"></div>
-                <input type="hidden" name="front" id="edit-front-hidden">
 
-                <label class="text-sm text-gray-500 mb-1 block">Verso</label>
-                <div id="editor-edit-back" style="height:100px" class="mb-4"></div>
-                <input type="hidden" name="back" id="edit-back-hidden">
+                <div class="mb-4">
+                    <label class="text-sm font-medium text-gray-600">Frente</label>
+                    <div id="editor-edit-front" class="mt-2 bg-gray-50 rounded-xl border border-gray-200"></div>
+                    <input type="hidden" name="front" id="edit-front-hidden">
+                </div>
 
-                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded w-full">Salvar</button>
+                <div class="mb-4">
+                    <label class="text-sm font-medium text-gray-600">Verso</label>
+                    <div id="editor-edit-back" class="mt-2 bg-gray-50 rounded-xl border border-gray-200"></div>
+                    <input type="hidden" name="back" id="edit-back-hidden">
+                </div>
+
+                <div class="mt-6 flex flex-col gap-2">
+                    <button type="submit" 
+                        class="bg-purple-600 hover:bg-purple-700 text-white 
+                        font-medium py-3 rounded-xl transition">
+                        Editar
+                    </button>
+                </div>
             </form>
-            <button onclick="document.getElementById('modal-edit-card').classList.add('hidden')"
-                    class="border w-full mt-2 text-gray-500 text-center">Cancelar</button>
+
+            <div class="mt-6 flex flex-col gap-2">
+                <button onclick="document.getElementById('modal-edit-card').classList.add('hidden')"
+                    class="border border-gray-300 hover:bg-gray-100 py-3 rounded-xl transition">
+                    Cancelar
+                </button>
+            </div>
+
         </div>
     </div>
 
