@@ -92,7 +92,7 @@ def import_cards(deck_id):
         reader = csv.DictReader(io.StringIO(content))
         cards_list = []
         for row in reader:
-            if row.get("front") and row.get("back"):
+            if row.get("front") or row.get("frente") and row.get("back") or row.get("verso"):
                 cards_list.append({
                     "front": row["front"],
                     "back": row["back"],

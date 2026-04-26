@@ -114,30 +114,59 @@
         <div id="heatmap" class="flex gap-1"></div>
     </div>
 
-    <div id="modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-        <div class="bg-white rounded-lg p-12 w-96">
-            <h2 class="font-bold text-xl mb-4">Novo Baralho</h2>
+    <div id="modal" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+        <div class="bg-white w-full max-w-2xl rounded-2xl shadow-xl p-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Novo Baralho</h2>
             <form action="/decks/new" method="POST">
                 <input type="text" name="name" placeholder="Nome" class="border w-full p-2 rounded mb-3">
                 <input type="text" name="description" placeholder="Descrição" class="border w-full p-2 rounded mb-4">
-                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded w-full">Criar</button>
+                
+                <div class="mt-6 flex flex-col gap-2">
+                    <button type="submit" 
+                        class="bg-purple-600 hover:bg-purple-700 text-white 
+                        font-medium py-3 rounded-xl transition">
+                        Criar
+                    </button>
+                </div>
+
             </form>
-            <button onclick="document.getElementById('modal').classList.add('hidden')" 
-                    class="mt-2 text-gray-500 w-full text-center">Cancelar</button>
+            
+            <div class="mt-4 flex flex-col gap-2">
+                <button onclick="document.getElementById('modal').classList.add('hidden')"
+                    class="border border-gray-300 hover:bg-gray-100 py-3 rounded-xl transition">
+                    Cancelar
+                </button>
+            </div>  
+            
+            
         </div>
     </div>
 
 
-    <div id="modal-edit" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-        <div class="bg-white rounded-lg p-12 w-96">
-            <h2 class="font-bold text-xl mb-4">Editar Baralho</h2>
+    <div id="modal-edit" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+        <div class="bg-white w-full max-w-2xl rounded-2xl shadow-xl p-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Editar Baralho</h2>
+
             <form id="form-edit" method="POST">
+
                 <input type="text" id="edit-name" name="name" placeholder="Nome" class="border w-full p-2 rounded mb-3">
                 <input type="text" id="edit-description" name="description" placeholder="Descrição" class="border w-full p-2 rounded mb-4">
-                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded w-full">Salvar</button>
+
+                <div class="mt-6 flex flex-col gap-2">
+                    <button type="submit" 
+                        class="bg-purple-600 hover:bg-purple-700 text-white 
+                        font-medium py-3 rounded-xl transition">
+                        Salvar
+                    </button>
+                </div>
             </form>
-            <button onclick="document.getElementById('modal-edit').classList.add('hidden')" 
-                    class="mt-2 text-gray-500 w-full text-center">Cancelar</button>
+            
+            <div class="mt-4 flex flex-col gap-2">
+                <button onclick="document.getElementById('modal-edit').classList.add('hidden')"
+                    class="border border-gray-300 hover:bg-gray-100 py-3 rounded-xl transition">
+                    Cancelar
+                </button>
+            </div>
         </div>
     </div>
 
