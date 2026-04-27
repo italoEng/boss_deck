@@ -6,6 +6,7 @@ from flask import current_app
 from app.database import create_card, update_card, get_due_cards, update_card_review, delete_card
 from app.database import get_deck
 from werkzeug.utils import secure_filename
+import json
 import os
 
 card_bp = Blueprint("card", __name__)
@@ -23,8 +24,19 @@ def allowed_audio(filename):
 def new_card(deck_id):
     front = request.form["front"].strip()
     back = request.form["back"].strip()
+    card_type = request.form.get("card_type", "basic")
     front_img = ""
     front_audio = ""
+    options = None
+
+    if card_type == "multiple_choice":
+        texts = request.form.getlist("option_text")
+        correct = request.form.get("correct_option")
+        options = [
+            {"text": text, "correct": str(i) == correct}
+            for i, text in enumerate(texts)
+            if text.strip()
+        ]
 
     if not front and not back:
         return redirect(f"/deck/{deck_id}?erro=Card+precisa+de+frente+e+verso")
@@ -50,7 +62,7 @@ def new_card(deck_id):
             front_audio = f'uploads/{filename}'
 
     try:
-        create_card(deck_id, front, back, front_img, front_audio)
+        create_card(deck_id, front, back, front_img, front_audio, card_type, options)
     except Exception as e:
         print(f"Erro ao criar card: {e}")
         return redirect("/?erro=Erro+ao+criar+card")
@@ -73,6 +85,10 @@ def cards(deck_id):
         return redirect("/?erro=Baralho+nao+encontrado")
     
     cards = get_due_cards(deck_id)
+    for card in cards:
+        if card.get("options"):
+            card["options"] = json.loads(card["options"])
+            
     return render_template("cards.html", cards=cards, deck_id=deck_id)
 
 @card_bp.route("/deck/<int:deck_id>/cards/<int:card_id>", methods=["POST"])

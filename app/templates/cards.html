@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link rel="icon" type="image/png" href="static/images/logo.png">
+    <title>Boss Deck</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
@@ -59,15 +60,35 @@
             </div>
         </div>
 
-        <div id="verso" style="display:none" class="flex justify-center mt-4">
-            <div class="text-3xl text-center">
-                {{ cards[0]["back"] | safe }}
+        {% if cards[0]["card_type"] == "multiple_choice" %}
+            <!-- Alternativas -->
+            <div class="flex flex-col items-center gap-3 mt-6 px-8">
+                {% for option in cards[0]["options"] %}
+                <button onclick="responderAlternativa(this, {{ loop.index0 }}, {{ option.correct | tojson }})"
+                    class="w-full max-w-lg border px-4 py-3 rounded-xl hover:bg-gray-100 text-left transition">
+                    {{ option.text }}
+                </button>
+                {% endfor %}
             </div>
-        </div>
 
-        <div class="flex justify-center m-4">
-            <button id="btn-revelar" onclick="revelar()" class="border px-4 py-2 hover:bg-gray-100 rounded">Verso</button>
-        </div>
+            <div id="verso" style="display:none" class="flex justify-center mt-4">
+                <div class="text-xl text-center text-gray-600">
+                    {{ cards[0]["back"] | safe }}
+                </div>
+            </div>
+
+        {% else %}
+            <!-- Card básico -->
+            <div id="verso" style="display:none" class="flex justify-center mt-4">
+                <div class="text-3xl text-center">
+                    {{ cards[0]["back"] | safe }}
+                </div>
+            </div>
+
+            <div class="flex justify-center m-4">
+                <button id="btn-revelar" onclick="revelar()" class="border px-4 py-2 hover:bg-gray-100 rounded">Verso</button>
+            </div>
+        {% endif %}
         
         <div class="flex justify-center m-4">
             <form action="/deck/{{ deck_id }}/cards/{{ cards[0]['id'] }}" method="POST">

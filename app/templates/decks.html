@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link rel="icon" type="image/png" href="static/images/logo.png">
+    <title>Boss Deck</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -220,47 +221,76 @@
         <div class="bg-white w-full max-w-2xl rounded-2xl shadow-xl p-6">
             <h2 class="text-2xl font-bold text-gray-800 mb-6">Novo Card</h2>
 
-                <form id="form-novo-card" action="/deck/{{ deck_id }}/cards/new" method="POST" enctype="multipart/form-data">
-                    
-                    <div class="mb-4">
-                        <label class="text-sm font-medium text-gray-600">Frente</label>
-                        <div id="editor-front" class="mt-2 bg-gray-50 rounded-xl border border-gray-200"></div>
-                        <input type="hidden" name="front" id="front-hidden">
-                    </div>
-
-                    <input
-                        type="text"
-                        placeholder="URL da imagem"
-                        class="w-full mt-2 mb-4 px-4 py-2 rounded-xl border border-gray-200 focus:ring-2 
-                        focus:ring-purple-500 outline-none"
-                    />
-
-                    <div class="mb-4">
-                        <label class="text-sm font-medium text-gray-600">Verso</label>
-                        <div id="editor-back" class="mt-2 bg-gray-50 rounded-xl border border-gray-200"></div>
-                        <input type="hidden" name="back" id="back-hidden">
-                    </div>
-
-                    <div class="mt-3 flex items-center justify-center border border-dashed rounded-xl 
-                        py-4 text-gray-500 hover:bg-gray-50 cursor-pointer">
-                        🎵 Clique para adicionar áudio
-                        <input type="file" name="front_audio" accept="audio/*" class="hidden">
-                    </div>
-
-                    <div class="mt-6 flex flex-col gap-2">
-                        <button type="submit" 
-                            class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 rounded-xl transition">
-                            Criar
-                        </button>
-                    </div>
-                </form>
-
-                <div class="mt-6 flex flex-col gap-2">
-                    <button onclick="document.getElementById('modal').classList.add('hidden')"
-                        class="border border-gray-300 hover:bg-gray-100 py-3 rounded-xl transition">
-                        Cancelar
+            <form id="form-novo-card" action="/deck/{{ deck_id }}/cards/new" method="POST" enctype="multipart/form-data">
+                
+                <!-- Tipo do card -->
+                <div class="flex gap-2 mb-4">
+                    <button type="button" onclick="setTipo('basic')" id="btn-basic"
+                        class="flex-1 py-2 rounded-lg border-2 border-purple-700 bg-purple-700 text-white font-bold transition">
+                        📝 Básico
+                    </button>
+                    <button type="button" onclick="setTipo('multiple_choice')" id="btn-mc"
+                        class="flex-1 py-2 rounded-lg border-2 border-gray-200 text-gray-500 font-bold transition">
+                        🔤 Múltipla Escolha
                     </button>
                 </div>
+                <input type="hidden" name="card_type" id="card-type" value="basic">
+
+                <div class="mb-4">
+                    <label class="text-sm font-medium text-gray-600">Frente</label>
+                    <div id="editor-front" class="mt-2 bg-gray-50 rounded-xl border border-gray-200"></div>
+                    <input type="hidden" name="front" id="front-hidden">
+                </div>
+
+                <input type="text" name="front_img_url" placeholder="URL da imagem"
+                    class="w-full mt-2 mb-4 px-4 py-2 rounded-xl border border-gray-200 focus:ring-2 
+                    focus:ring-purple-500 outline-none"/>
+
+                <div class="mb-4">
+                    <label class="text-sm font-medium text-gray-600">Verso</label>
+                    <div id="editor-back" class="mt-2 bg-gray-50 rounded-xl border border-gray-200"></div>
+                    <input type="hidden" name="back" id="back-hidden">
+                </div>
+
+                <!-- Alternativas (múltipla escolha) -->
+                <div id="area-alternativas" class="hidden mb-4">
+                    <label class="text-sm font-medium text-gray-600 mb-2 block">Alternativas</label>
+                    <div id="lista-alternativas">
+                        <div class="flex items-center gap-2 mb-2">
+                            <input type="radio" name="correct_option" value="0" checked>
+                            <input type="text" name="option_text" placeholder="Alternativa 1" 
+                                class="border w-full p-2 rounded-xl">
+                        </div>
+                        <div class="flex items-center gap-2 mb-2">
+                            <input type="radio" name="correct_option" value="1">
+                            <input type="text" name="option_text" placeholder="Alternativa 2" 
+                                class="border w-full p-2 rounded-xl">
+                        </div>
+                    </div>
+                    <button type="button" onclick="adicionarAlternativa()" 
+                        class="text-purple-700 text-sm font-bold mt-1">+ Adicionar alternativa</button>
+                </div>
+
+                <div class="mt-3 flex items-center justify-center border border-dashed rounded-xl 
+                    py-4 text-gray-500 hover:bg-gray-50 cursor-pointer">
+                    🎵 Clique para adicionar áudio
+                    <input type="file" name="front_audio" accept="audio/*" class="hidden">
+                </div>
+
+                <div class="mt-6 flex flex-col gap-2">
+                    <button type="submit" 
+                        class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 rounded-xl transition">
+                        Criar
+                    </button>
+                </div>
+            </form>
+
+            <div class="mt-6 flex flex-col gap-2">
+                <button onclick="document.getElementById('modal').classList.add('hidden')"
+                    class="border border-gray-300 hover:bg-gray-100 py-3 rounded-xl transition">
+                    Cancelar
+                </button>
+            </div>
         </div>
     </div>
 

@@ -1,6 +1,7 @@
 import pymysql
 from dotenv import load_dotenv
 import os
+import json
 from sm2 import sm2
 
 
@@ -28,6 +29,16 @@ def init_db():
 
     try:
         cursor.execute("CREATE INDEX idx_review_log_deck_id ON review_log(deck_id)")
+    except:
+        pass
+
+    try:
+        cursor.execute("ALTER TABLE cards ADD COLUMN card_type VARCHAR(20) DEFAULT 'basic'")
+    except:
+        pass
+
+    try:
+        cursor.execute("ALTER TABLE cards ADD COLUMN options JSON")
     except:
         pass
 
@@ -91,12 +102,14 @@ def create_deck(name, description):
     conn.commit()
     conn.close()
 
-def create_card(deck_id, front, back, front_img="", front_audio=""):
+def create_card(deck_id, front, back, front_img="", front_audio="", card_type="basic", options=None):
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute(
-        "INSERT INTO cards (deck_id, front, back, next_review, front_img, front_audio) VALUES (%s, %s, %s, CURDATE(), %s, %s)",
-        (deck_id, front, back, front_img, front_audio)
+        """INSERT INTO cards (deck_id, front, back, next_review, front_img, front_audio, card_type, options) 
+           VALUES (%s, %s, %s, CURDATE(), %s, %s, %s, %s)""",
+        (deck_id, front, back, front_img, front_audio, card_type, 
+         json.dumps(options) if options else None)
     )
     conn.commit()
     conn.close()
