@@ -8,6 +8,7 @@ from app.database import get_deck
 from werkzeug.utils import secure_filename
 import json
 import os
+import random
 
 card_bp = Blueprint("card", __name__)
 
@@ -87,7 +88,9 @@ def cards(deck_id):
     cards = get_due_cards(deck_id)
     for card in cards:
         if card.get("options"):
-            card["options"] = json.loads(card["options"])
+            options = json.loads(card["options"])
+            random.shuffle(options)
+            card["options"] = options
             
     return render_template("cards.html", cards=cards, deck_id=deck_id)
 
