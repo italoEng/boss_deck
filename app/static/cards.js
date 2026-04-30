@@ -29,3 +29,41 @@ function responderAlternativa(btn, index, correct) {
     // mostra o verso
     document.getElementById('verso').style.display = 'flex';
 }
+
+let respondido = false;
+
+function responderAlternativa(btn, index, isCorrect) {
+    if (respondido) return;
+    if (btn.classList.contains("eliminada")) return;
+
+    respondido = true;
+
+    const todas = document.querySelectorAll(".alternativa");
+
+    todas.forEach(el => {
+        el.classList.add("pointer-events-none"); // trava tudo
+
+        const correta = el.dataset.correct === "true";
+
+        if (correta) {
+            el.classList.add("correta");
+        }
+    });
+
+    if (isCorrect) {
+        btn.classList.add("correta");
+    } else {
+        btn.classList.add("errada");
+    }
+
+    // mostra resposta depois
+        document.getElementById("verso").style.display = "block";
+    }
+
+function toggleEliminacao(btn, event) {
+    event.stopPropagation();
+
+    if (respondido) return;
+
+    btn.classList.toggle("eliminada");
+}

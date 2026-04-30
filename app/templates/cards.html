@@ -11,6 +11,26 @@
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
 
+    <style>
+        .eliminada {
+            text-decoration: line-through;
+            opacity: 0.35;
+            transform: scale(0.98);
+            pointer-events: none;
+        }
+
+        .correta {
+            background-color: #dcfce7;
+            border-color: #22c55e;
+            color: #166534;
+        }
+
+        .errada {
+            background-color: #fee2e2;
+            border-color: #ef4444;
+            color: #7f1d1d;
+        }
+    </style>
 
 </head>
 <body>
@@ -31,6 +51,8 @@
     </nav>
 
     {% if cards %}
+
+    <div class="w-full max-w-3xl bg-white shadow-lg rounded-2xl p-8 items-center mx-auto mt-8">
         {% if cards[0]["front_img"] %}
             {% set img = cards[0]["front_img"] %}
             {% if "http" in img %}
@@ -41,7 +63,7 @@
         {% endif %}
 
 
-        <div class="flex items-centre justify-center gap-4">
+        <div class="flex flex-col items-center gap-4">
             {% if cards[0]["front_audio"] %}
                 <audio id="audio-card" autoplay src="/static/{{ cards[0]['front_audio'] }}"></audio>
                 <button onclick="document.getElementById('audio-card').play()" 
@@ -55,19 +77,38 @@
                 </button>
             {% endif %}
 
-            <div class="text-center text-3xl mt-4">
+            <div class="text-center text-2xl md:text-3xl font-semibold text-gray-800 leading-relaxed">
                 {{ cards[0]["front"] | safe }}
             </div>
         </div>
 
         {% if cards[0]["card_type"] == "multiple_choice" %}
+
             <!-- Alternativas -->
-            <div class="flex flex-col items-center gap-3 mt-6 px-8">
+            <div class="mt-8 flex flex-col gap-3">
                 {% for option in cards[0]["options"] %}
-                <button onclick="responderAlternativa(this, {{ loop.index0 }}, {{ option.correct | tojson }})"
-                    class="w-full max-w-lg border px-4 py-3 rounded-xl hover:bg-gray-100 text-left transition">
-                    {{ option.text }}
+                <div class="flex items-center gap-3">
+
+
+                <!-- BOTÃO ELIMINAR -->
+                <button onclick="toggleEliminacao(this.nextElementSibling, event)"
+                    class="p-2 rounded-full border border-gray-300 
+                    hover:bg-gray-100 transition">
+                        ✂️
+                    </button>
+
+                <!-- ALTERNATIVA -->
+                <button 
+                    onclick="responderAlternativa(this, {{ loop.index0 }}, {{ option.correct | tojson }})"
+                    data-correct="{{ option.correct }}"
+                    class="alternativa flex-1 border border-gray-200 px-4 py-3 rounded-xl text-left 
+                    transition duration-200 ease-in-out
+                    hover:bg-indigo-50 hover:border-indigo-300
+                    active:scale-[0.98]">
+                        {{ option.text }}
                 </button>
+
+            </div>
                 {% endfor %}
             </div>
 
@@ -85,18 +126,36 @@
                 </div>
             </div>
 
-            <div class="flex justify-center m-4">
-                <button id="btn-revelar" onclick="revelar()" class="border px-4 py-2 hover:bg-gray-100 rounded">Verso</button>
+            <div class="flex justify-center mt-6">
+                <button id="btn-revelar" onclick="revelar()"
+                    class="bg-purple-500 text-white px-6 py-2 rounded-lg shadow 
+                        hover:bg-purple-600 transition">
+                    Mostrar resposta
+                </button>
             </div>
         {% endif %}
         
-        <div class="flex justify-center m-4">
-            <form action="/deck/{{ deck_id }}/cards/{{ cards[0]['id'] }}" method="POST">
-                <button class="border px-4 py-2 rounded hover:bg-red-300" type="submit" name="quality" value="0">Errei</button>
-                <button class="border px-4 py-2 rounded hover:bg-green-300" type="submit" name="quality" value="5">Fácil</button>
-                <button class="border px-4 py-2 rounded hover:bg-orange-300" type="submit" name="quality" value="3">Dificil</button>
+        <div class="flex justify-center gap-4 mt-8">
+            <form action="/deck/{{ deck_id }}/cards/{{ cards[0]['id'] }}" method="POST" class="flex gap-4">
+
+                <button class="px-5 py-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-red-200 transition"
+                        type="submit" name="quality" value="0">
+                    Errei
+                </button>
+
+                <button class="px-5 py-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-green-200 transition"
+                        type="submit" name="quality" value="5">
+                    Fácil
+                </button>
+
+                <button class="px-5 py-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-yellow-200 transition"
+                        type="submit" name="quality" value="3">
+                    Difícil
+                </button>
             </form>
         </div>
+    
+    </div>
 
     {% else %}
         <p class="text-center text-green-500 mt-8 text-3xl m-4">Nenhum card para revisar hoje!</p>
