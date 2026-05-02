@@ -51,6 +51,12 @@
     </nav>
 
     {% if cards %}
+    <div class="text-center text-gray-500 text-sm mt-2">
+        {{ total }}
+    </div>
+    {% endif %}
+
+    {% if cards %}
 
     <div class="w-full max-w-3xl bg-white shadow-lg rounded-2xl p-8 items-center mx-auto mt-8">
         {% if cards[0]["front_img"] %}
@@ -94,8 +100,13 @@
                 <button onclick="toggleEliminacao(this.nextElementSibling, event)"
                     class="p-2 rounded-full border border-gray-300 
                     hover:bg-gray-100 transition">
-                        ✂️
-                    </button>
+                        <iconify-icon
+                            icon="tabler:scissors"
+                            width="32"
+                            class="text-black-500 transition-all"
+                            style="transition: transform 0.2s; display:inline-block">
+                        </iconify-icon>
+                </button>
 
                 <!-- ALTERNATIVA -->
                 <button 

@@ -85,14 +85,21 @@ def cards(deck_id):
     if not deck:
         return redirect("/?erro=Baralho+nao+encontrado")
     
-    cards = get_due_cards(deck_id)
-    for card in cards:
-        if card.get("options"):
-            options = json.loads(card["options"])
-            random.shuffle(options)
-            card["options"] = options
+    cards_list = get_due_cards(deck_id)       
+    total = len(cards_list)
+    index = request.args.get('index', 0, type=int)
+
+    if index >= total:
+        return redirect(f"/deck/{deck_id}")
+    
+    card_atual = cards_list[index]
+    if card_atual.get("options"):
+        options = json.loads(card_atual["options"])
+        random.shuffle(options)
+        card_atual["options"] = options
+
             
-    return render_template("cards.html", cards=cards, deck_id=deck_id)
+    return render_template("cards.html", cards=[card_atual], deck_id=deck_id, total=total, index=index)
 
 @card_bp.route("/deck/<int:deck_id>/cards/<int:card_id>", methods=["POST"])
 def review_card(deck_id, card_id):

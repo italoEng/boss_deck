@@ -67,3 +67,4 @@ function toggleEliminacao(btn, event) {
 
     btn.classList.toggle("eliminada");
 }
+
