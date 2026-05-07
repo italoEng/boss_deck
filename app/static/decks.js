@@ -141,3 +141,27 @@ function adicionarAlternativa() {
     lista.appendChild(div);
     alternativaCount++;
 }
+
+// seleção múltipla
+function selecionarTodos(checkbox) {
+    document.querySelectorAll('.card-checkbox').forEach(cb => {
+        cb.checked = checkbox.checked;
+    });
+    atualizarBtnDeletar();
+}
+
+function atualizarBtnDeletar() {
+    const selecionados = document.querySelectorAll('.card-checkbox:checked').length;
+    const btn = document.getElementById('btn-deletar-selecionados');
+    if (selecionados > 0) {
+        btn.classList.remove('hidden');
+        btn.textContent = `🗑 Deletar selecionados (${selecionados})`;
+    } else {
+        btn.classList.add('hidden');
+    }
+}
+
+
+document.querySelectorAll('.card-checkbox').forEach(cb => {
+    cb.addEventListener('change', atualizarBtnDeletar);
+});

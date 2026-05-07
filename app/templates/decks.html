@@ -139,6 +139,13 @@
 
     <div id="lista" class="{% if lista_aberta %}block{% else %}hidden{% endif %} p-8">
         <div class="bg-white rounded-xl shadow overflow-hidden"></div>
+
+            <button onclick="deletarSelecionados()" 
+                id="btn-deletar-selecionados"
+                class="hidden bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition">
+                🗑 Deletar selecionados
+            </button>
+
             <table class="w-full">
 
                 {% if total_pages > 1 %}
@@ -174,6 +181,9 @@
 
                 <thead class="bg-gray-100 text-gray-600 text-sm">
                     <tr class="bg-gray-100">
+                        <th class="border p-2">
+                            <input type="checkbox" id="select-all" onclick="selecionarTodos(this)">
+                        </th>
                         <th class="border p-2 text-left">id</th>
                         <th class="border p-2 text-left">Frente</th>
                         <th class="border p-2 text-left">Verso</th>
@@ -184,6 +194,9 @@
                 <tbody>
                 {% for card in cards %}
                 <tr class="hover:bg-gray-200 transition">
+                    <td class="border p-2">
+                        <input type="checkbox" class="card-checkbox" value="{{ card['id'] }}" onchange="atualizarBtnDeletar()">
+                    </td>
                     <td class="border p-2">{{ card["id"]}}</td>
                     <td class="border p-2">{{ card["front"] | safe }}</td>
                     <td class="border p-2 text-gray-600">{{ card["back"] | safe }}</td>
