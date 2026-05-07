@@ -2,10 +2,11 @@ from flask import Blueprint
 from flask import render_template
 from flask import request
 from flask import redirect
+from flask import jsonify
 import csv
 import io
 from app.database import create_deck, get_decks, get_deck, update_deck, delete_deck, get_deck_stats
-from app.database import get_cards, get_due_cards, count_cards, create_cards_bulk
+from app.database import get_cards, get_due_cards, count_cards, create_cards_bulk, delete_cards_bulk
 from app.database import get_review_heatmap
 
 
@@ -105,3 +106,14 @@ def import_cards(deck_id):
         print(f"Erro ao importar CSV: {e}")
         
         return redirect(f"/deck/{deck_id}?erro=Erro+ao+importar+CSV")
+    
+
+@deck_bp.route("/deck/<int:deck_id>/cards/delete-bulk", methods=["POST"])
+def delete_cards_bulk_route(deck_id):
+    from app.database import delete_cards_bulk
+    data = request.json
+    ids = data.get("ids", [])
+    if not ids:
+        return jsonify({"error": "nenhum card selecionado"}), 400
+    delete_cards_bulk(ids)
+    return jsonify({"ok": True})

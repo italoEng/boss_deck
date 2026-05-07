@@ -287,6 +287,14 @@ def create_cards_bulk(deck_id, cards_list):
     conn.commit()
     conn.close()
 
+def delete_cards_bulk(ids):
+    conn = get_connection()
+    cursor = conn.cursor()
+    placeholders = ', '.join(['%s'] * len(ids))
+    cursor.execute(f"DELETE FROM cards WHERE id IN ({placeholders})", ids)
+    conn.commit()
+    conn.close()
+
     
 if __name__ == "__main__":
     init_db()

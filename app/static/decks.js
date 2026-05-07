@@ -165,3 +165,21 @@ function atualizarBtnDeletar() {
 document.querySelectorAll('.card-checkbox').forEach(cb => {
     cb.addEventListener('change', atualizarBtnDeletar);
 });
+
+// deletar selecionados
+async function deletarSelecionados() {
+    const selecionados = Array.from(document.querySelectorAll('.card-checkbox:checked'))
+        .map(cb => cb.value);
+    
+    if (!confirm(`Deletar ${selecionados.length} cards selecionados?`)) return;
+
+    const response = await fetch(`/deck/${DECK_ID}/cards/delete-bulk`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids: selecionados })
+    });
+
+    if (response.ok) {
+        location.reload();
+    }
+}

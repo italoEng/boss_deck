@@ -140,13 +140,13 @@
     <div id="lista" class="{% if lista_aberta %}block{% else %}hidden{% endif %} p-8">
         <div class="bg-white rounded-xl shadow overflow-hidden"></div>
 
-            <button onclick="deletarSelecionados()" 
-                id="btn-deletar-selecionados"
-                class="hidden bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition">
-                🗑 Deletar selecionados
-            </button>
-
             <table class="w-full">
+
+                <button onclick="deletarSelecionados()" 
+                    id="btn-deletar-selecionados"
+                    class="hidden bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition">
+                    🗑 Deletar selecionados
+                </button>
 
                 {% if total_pages > 1 %}
                 <div class="flex justify-center gap-2 mt-4">
