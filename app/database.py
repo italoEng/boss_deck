@@ -276,7 +276,7 @@ def get_review_heatmap():
     cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     cursor.execute("""
         SELECT 
-            DATE_FORMAT(reviewed_at, '%Y-%m-%d') as reviewed_at,
+            TO_CHAR(reviewed_at, 'YYYY-MM-DD') as reviewed_at,
             COUNT(*) AS total
         FROM review_log
         GROUP BY reviewed_at
