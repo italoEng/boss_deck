@@ -15,33 +15,39 @@ def init_db():
 
     try:
         cursor.execute("CREATE INDEX idx_cards_deck_id ON cards(deck_id)")
+        conn.commit()
     except:
-        pass
+        conn.rollback()
 
     try:
         cursor.execute("CREATE INDEX idx_cards_next_review ON cards(next_review)")
+        conn.commit()
     except:
-        pass
+        conn.rollback()
 
     try:
         cursor.execute("CREATE INDEX idx_review_log_reviewed_at ON review_log(reviewed_at)")
+        conn.commit()
     except:
-        pass
+        conn.rollback()
 
     try:
         cursor.execute("CREATE INDEX idx_review_log_deck_id ON review_log(deck_id)")
+        conn.commit()
     except:
-        pass
+        conn.rollback()
 
     try:
         cursor.execute("ALTER TABLE cards ADD COLUMN card_type VARCHAR(20) DEFAULT 'basic'")
+        conn.commit()
     except:
-        pass
+        conn.rollback()
 
     try:
         cursor.execute("ALTER TABLE cards ADD COLUMN options JSON")
+        conn.commit()
     except:
-        pass
+        conn.rollback()
 
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS decks (
@@ -76,8 +82,9 @@ def init_db():
 
     try:
         cursor.execute("ALTER TABLE cards ADD COLUMN next_review DATE")
+        conn.commit()
     except:
-        pass
+        conn.rollback()
 
     conn.commit()
     conn.close()
