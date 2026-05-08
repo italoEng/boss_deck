@@ -1,8 +1,9 @@
-import pymysql
 from dotenv import load_dotenv
 import os
 import json
 from sm2 import sm2
+import psycopg2
+import psycopg2.extras
 
 
 load_dotenv()
@@ -10,7 +11,7 @@ load_dotenv()
 def init_db():
 
     conn = get_connection()
-    cursor = conn.cursor()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
     try:
         cursor.execute("CREATE INDEX idx_cards_deck_id ON cards(deck_id)")
@@ -44,7 +45,7 @@ def init_db():
 
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS decks (
-            id          INTEGER PRIMARY KEY AUTO_INCREMENT,
+            id          SERIAL PRIMARY KEY,
             name        TEXT NOT NULL,
             description TEXT
         )
@@ -52,12 +53,12 @@ def init_db():
 
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS cards (
-            id          INT PRIMARY KEY AUTO_INCREMENT,
+            id          SERIAL PRIMARY KEY,
             deck_id     INT NOT NULL,
             front       TEXT NOT NULL,
             back        TEXT NOT NULL,
             easiness    FLOAT DEFAULT 2.5,
-            `interval`    INT DEFAULT 1,
+            interval    INT DEFAULT 1,
             repetitions INT DEFAULT 0,
             front_img   TEXT,
             front_audio TEXT
@@ -66,7 +67,7 @@ def init_db():
 
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS review_log (
-            id          INT PRIMARY KEY AUTO_INCREMENT,
+            id          SERIAL PRIMARY KEY,
             card_id     INT,
             deck_id     INT,
             reviewed_at DATE
@@ -81,20 +82,26 @@ def init_db():
     conn.commit()
     conn.close()
 
+
 def get_connection():
-    conn = pymysql.connect(
-        host=os.environ.get("MYSQLHOST"),
-        port=int(os.environ.get("MYSQLPORT", 3306)),
-        user=os.environ.get("MYSQLUSER"),
-        password=os.environ.get("MYSQLPASSWORD"),
-        database=os.environ.get("MYSQLDATABASE"),
-        cursorclass=pymysql.cursors.DictCursor
-    )
+    conn = psycopg2.connect(os.getenv("DATABASE_URL"))
     return conn
+
+## MY SQL
+##def get_connection():
+##    conn = pymysql.connect(
+##        host=os.environ.get("MYSQLHOST"),
+##        port=int(os.environ.get("MYSQLPORT", 3306)),
+##        user=os.environ.get("MYSQLUSER"),
+##        password=os.environ.get("MYSQLPASSWORD"),
+##        database=os.environ.get("MYSQLDATABASE"),
+##        cursorclass=pymysql.cursors.DictCursor
+##    )
+##    return conn
 
 def create_deck(name, description):
     conn = get_connection()
-    cursor = conn.cursor()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     cursor.execute(
         "INSERT INTO decks (name, description) VALUES (%s, %s)",
         (name, description)
@@ -104,10 +111,10 @@ def create_deck(name, description):
 
 def create_card(deck_id, front, back, front_img="", front_audio="", card_type="basic", options=None):
     conn = get_connection()
-    cursor = conn.cursor()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     cursor.execute(
         """INSERT INTO cards (deck_id, front, back, next_review, front_img, front_audio, card_type, options) 
-           VALUES (%s, %s, %s, CURDATE(), %s, %s, %s, %s)""",
+           VALUES (%s, %s, %s, CURRENT_DATE, %s, %s, %s, %s)""",
         (deck_id, front, back, front_img, front_audio, card_type, 
          json.dumps(options) if options else None)
     )
@@ -116,11 +123,11 @@ def create_card(deck_id, front, back, front_img="", front_audio="", card_type="b
 
 def get_decks():
     conn = get_connection()
-    cursor = conn.cursor()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     cursor.execute("""
         SELECT 
             decks.*, 
-            COUNT(CASE WHEN cards.next_review <= CURDATE() THEN 1 END) AS due
+            COUNT(CASE WHEN cards.next_review <= CURRENT_DATE THEN 1 END) AS due
         FROM decks
         LEFT JOIN cards 
             ON cards.deck_id = decks.id
@@ -133,12 +140,12 @@ def get_decks():
 
 def get_deck_stats(deck_id):
     conn = get_connection()
-    cursor = conn.cursor()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     cursor.execute("""
         SELECT
             COUNT(*) AS total,
-            SUM(CASE WHEN next_review <= CURDATE() THEN 1 ELSE 0 END) AS due,
-            SUM(CASE WHEN repetitions >= 5 AND `interval` >= 21 THEN 1 ELSE 0 END) AS mastered,
+            SUM(CASE WHEN next_review <= CURRENT_DATE THEN 1 ELSE 0 END) AS due,
+            SUM(CASE WHEN repetitions >= 5 AND interval >= 21 THEN 1 ELSE 0 END) AS mastered,
             ROUND(AVG(easiness), 2) AS avg_easiness
         FROM cards
         WHERE deck_id = %s
@@ -149,7 +156,7 @@ def get_deck_stats(deck_id):
 
 def get_deck(deck_id):
     conn = get_connection()
-    cursor = conn.cursor()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     cursor.execute("""
         SELECT * 
         FROM decks
@@ -162,7 +169,7 @@ def get_deck(deck_id):
 def get_cards(deck_id, page=1, per_page=20):
     offset = (page - 1) * per_page
     conn = get_connection()
-    cursor = conn.cursor()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     cursor.execute("""
         SELECT * 
         FROM cards 
@@ -175,7 +182,7 @@ def get_cards(deck_id, page=1, per_page=20):
 
 def count_cards(deck_id):
     conn = get_connection()
-    cursor = conn.cursor()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     cursor.execute("SELECT COUNT(*) as total FROM cards WHERE deck_id = %s", (deck_id,))
     result = cursor.fetchone()
     conn.close()
@@ -183,31 +190,31 @@ def count_cards(deck_id):
 
 def update_card_review(card_id, quality, deck_id):
     conn = get_connection()
-    cursor = conn.cursor()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     cursor.execute("SELECT * FROM cards WHERE id = %s", (card_id,))
     card = cursor.fetchone() 
     new_easiness, new_interval, next_review = sm2(
         card["easiness"], card["interval"], card["repetitions"], quality
     )
     cursor.execute("""
-        UPDATE cards SET easiness=%s, `interval`=%s, next_review=%s, repetitions=%s
+        UPDATE cards SET easiness=%s, interval=%s, next_review=%s, repetitions=%s
         WHERE id=%s
     """, (new_easiness, new_interval, next_review, card["repetitions"] + 1, card_id))
-    cursor.execute("INSERT INTO review_log (card_id, deck_id, reviewed_at) VALUES (%s, %s, CURDATE())", (card_id, deck_id))
+    cursor.execute("INSERT INTO review_log (card_id, deck_id, reviewed_at) VALUES (%s, %s, CURRENT_DATE)", (card_id, deck_id))
     conn.commit()
     conn.close()
 
 def get_due_cards(deck_id):
     conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM cards WHERE deck_id = %s AND next_review <= CURDATE()", (deck_id,))
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    cursor.execute("SELECT * FROM cards WHERE deck_id = %s AND next_review <= CURRENT_DATE", (deck_id,))
     cards = cursor.fetchall()
     conn.close()
     return cards
 
 def update_deck(name, description, deck_id):
     conn = get_connection()
-    cursor = conn.cursor()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     cursor.execute("UPDATE decks SET name = %s, description = %s WHERE id = %s", 
         (name, description, deck_id)
     )
@@ -216,7 +223,7 @@ def update_deck(name, description, deck_id):
 
 def update_card(front, back, card_id):
     conn = get_connection()
-    cursor = conn.cursor()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     cursor.execute("UPDATE cards SET front = %s, back = %s WHERE id = %s",
         (front, back, card_id)
     )
@@ -225,7 +232,7 @@ def update_card(front, back, card_id):
 
 def delete_deck(deck_id):
     conn = get_connection()
-    cursor = conn.cursor()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     cursor.execute("DELETE FROM cards WHERE deck_id = %s", (deck_id,))
     cursor.execute("DELETE FROM decks WHERE id = %s", (deck_id,))
     conn.commit()
@@ -233,7 +240,7 @@ def delete_deck(deck_id):
 
 def delete_card(card_id):
     conn = get_connection()
-    cursor = conn.cursor()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     cursor.execute("SELECT front_img, front_audio FROM cards WHERE id = %s", (card_id,))
     card = cursor.fetchone()
 
@@ -259,7 +266,7 @@ def delete_card(card_id):
 # grafico heatmap
 def get_review_heatmap():
     conn = get_connection()
-    cursor = conn.cursor()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     cursor.execute("""
         SELECT 
             DATE_FORMAT(reviewed_at, '%Y-%m-%d') as reviewed_at,
@@ -276,11 +283,11 @@ def get_review_heatmap():
 # csv
 def create_cards_bulk(deck_id, cards_list):
     conn = get_connection()
-    cursor = conn.cursor()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     for card in cards_list:
         cursor.execute(
             """INSERT INTO cards (deck_id, front, back, next_review, front_img, front_audio) 
-               VALUES (%s, %s, %s, CURDATE(), %s, %s)""",
+               VALUES (%s, %s, %s, CURRENT_DATE, %s, %s)""",
             (deck_id, card["front"], card["back"], 
              card.get("front_img", ""), card.get("front_audio", ""))
         )
@@ -289,7 +296,7 @@ def create_cards_bulk(deck_id, cards_list):
 
 def delete_cards_bulk(ids):
     conn = get_connection()
-    cursor = conn.cursor()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     placeholders = ', '.join(['%s'] * len(ids))
     cursor.execute(f"DELETE FROM cards WHERE id IN ({placeholders})", ids)
     conn.commit()
