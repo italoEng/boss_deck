@@ -153,7 +153,7 @@ def get_deck_stats(deck_id):
             COUNT(*) AS total,
             SUM(CASE WHEN next_review <= CURRENT_DATE THEN 1 ELSE 0 END) AS due,
             SUM(CASE WHEN repetitions >= 5 AND interval >= 21 THEN 1 ELSE 0 END) AS mastered,
-            ROUND(AVG(easiness), 2) AS avg_easiness
+            ROUND(AVG(easiness)::numeric, 2) AS avg_easiness
         FROM cards
         WHERE deck_id = %s
     """, (deck_id,))

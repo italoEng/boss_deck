@@ -10,6 +10,7 @@ dependencies = [
     "gunicorn>=25.3.0",
     "mysqldump>=0.0.10",
     "psycopg2>=2.9.12",
+    "psycopg2-binary>=2.9.12",
     "pymysql>=1.1.2",
     "python-dotenv>=1.2.2",
     "render-template>=0.2.0",
