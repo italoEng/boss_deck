@@ -94,10 +94,12 @@ def cards(deck_id):
     
     card_atual = cards_list[index]
     if card_atual.get("options"):
-        options = json.loads(card_atual["options"])
+        options = card_atual["options"]
+        if isinstance(options, str):
+            options = json.loads(options)
+            
         random.shuffle(options)
         card_atual["options"] = options
-
             
     return render_template("cards.html", cards=[card_atual], deck_id=deck_id, total=total, index=index)
 
