@@ -65,11 +65,38 @@ function buildHeatmap() {
         }
 
         // CORES
-        if (count === 0)       box.classList.add('bg-zinc-200');
-        else if (count < 5)    box.classList.add('bg-purple-900');
-        else if (count < 10)   box.classList.add('bg-purple-700');
-        else if (count < 20)   box.classList.add('bg-purple-500');
-        else                   box.classList.add('bg-purple-400');
+        if (count === 0) {
+            box.classList.add(
+                'bg-zinc-200',
+                'dark:bg-slate-500'
+            );
+        }
+        else if (count < 200) {
+            box.classList.add(
+                'bg-purple-900',
+                'dark:bg-violet-900'
+            );
+        }
+        else if (count < 150) {
+            box.classList.add(
+                'bg-purple-700',
+                'dark:bg-violet-700'
+            );
+        }
+        else if (count < 100) {
+            box.classList.add(
+                'bg-purple-500',
+                'dark:bg-violet-500'
+            );
+        }
+        else {
+            box.classList.add(
+                'bg-purple-400',
+                'dark:bg-violet-400'
+            );
+        }                 
+        
+        box.classList.add('bg-purple-400');
 
         // TOOLTIP
         const tooltip = document.createElement('div');
