@@ -133,8 +133,16 @@ def get_decks():
     cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     cursor.execute("""
         SELECT 
-            decks.*, 
-            COUNT(CASE WHEN cards.next_review <= CURRENT_DATE THEN 1 END) AS due
+            decks.*,
+            COUNT(cards.id) AS total,
+            COUNT(CASE WHEN cards.next_review <= CURRENT_DATE THEN 1 END) AS due,
+            COUNT(CASE WHEN cards.repetitions >= 5 AND cards.interval >= 21 THEN 1 END) AS mastered,
+            (
+                SELECT COUNT(*) 
+                FROM review_log rl 
+                WHERE rl.deck_id = decks.id 
+                    AND rl.reviewed_at = CURRENT_DATE
+            ) AS studied_today
         FROM decks
         LEFT JOIN cards 
             ON cards.deck_id = decks.id
