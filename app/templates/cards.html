@@ -11,6 +11,13 @@
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
 
+    <!-- Rich text editor -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+    <!-- Katex -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+
     <style>
         .eliminada {
             text-decoration: line-through;
@@ -37,7 +44,7 @@
     <script src="/static/cards.js"></script>
     
 
-    <nav class="ml-2 mt-2">
+    <nav class="flex justify-between items-center ml-2 mt-2">
         <a href='/' title="Início">
             <iconify-icon
                 icon="tabler:home-2-filled"
@@ -48,17 +55,27 @@
                 onmouseout="this.style.transform='scale(1)'">
             </iconify-icon>
         </a>
+        <button class="group" onclick="toggleEdit()">
+            <iconify-icon
+                icon="line-md:cog"
+                width="32"
+                class="text-black-500 hover:text-red-500 transition-all">
+            </iconify-icon>
+        </button>
     </nav>
 
     {% if cards %}
     <div class="text-center text-gray-500 text-sm mt-2">
-        {{ total }}
+        {{ index + 1 }} / {{ total }}
     </div>
     {% endif %}
 
     {% if cards %}
-
-    <div class="w-full max-w-3xl bg-white shadow-lg rounded-2xl p-8 items-center mx-auto mt-8">
+    <div id="card-front-data" style="display:none">{{ cards[0]["front"] | safe }}</div>
+    <div id="card-back-data" style="display:none">{{ cards[0]["back"] | safe }}</div>
+    
+    <div id="modo-estudo" 
+        class="w-full max-w-3xl bg-white shadow-lg rounded-2xl p-8 items-center mx-auto mt-8">
         {% if cards[0]["front_img"] %}
             {% set img = cards[0]["front_img"] %}
             {% if "http" in img %}
@@ -148,6 +165,7 @@
         
         <div class="flex justify-center gap-4 mt-8">
             <form action="/deck/{{ deck_id }}/cards/{{ cards[0]['id'] }}" method="POST" class="flex gap-4">
+                <input type="hidden" name="next_index" value="{{ index + 1 }}">
 
                 <button class="px-5 py-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-red-200 transition"
                         type="submit" name="quality" value="0">
@@ -166,6 +184,55 @@
             </form>
         </div>
     
+    </div>
+
+    <!-- MODO EDIÇÃO -->
+    <div id="modo-edicao" style="display:none"
+        class="w-full max-w-3xl bg-white shadow-lg rounded-2xl p-8 mx-auto mt-8">
+        
+        <h3 class="text-lg font-bold text-gray-700 mb-4">Editando card</h3>
+        
+        <div class="flex flex-col gap-4">
+            <div>
+                <label class="text-sm text-gray-500 font-medium">Frente</label>
+                <div id="quill-edit-front" class="mt-1 bg-gray-50 rounded-xl border border-gray-200" style="height:120px"></div>
+            </div>
+
+            {% if cards[0]["card_type"] == "multiple_choice" %}
+            <!-- Alternativas editáveis -->
+            <div>
+                <label class="text-sm text-gray-500 font-medium">Alternativas</label>
+                <div id="edit-opcoes" class="flex flex-col gap-2 mt-2">
+                    {% for option in cards[0]["options"] %}
+                    <div class="flex items-center gap-2">
+                        <input type="radio" name="edit-correct" value="{{ loop.index0 }}"
+                            {% if option.correct %}checked{% endif %}>
+                        <input type="text" value="{{ option.text }}"
+                            class="border w-full p-2 rounded-xl edit-opcao-text">
+                    </div>
+                    {% endfor %}
+                </div>
+                <button type="button" onclick="adicionarOpcaoEdicao()"
+                    class="text-purple-600 text-sm font-bold mt-2">+ Adicionar alternativa</button>
+            </div>
+            {% endif %}
+
+            <div>
+                <label class="text-sm text-gray-500 font-medium">Verso</label>
+                <div id="quill-edit-back" class="mt-1 bg-gray-50 rounded-xl border border-gray-200" style="height:120px"></div>
+            </div>
+
+            <div class="flex gap-2 mt-2">
+                <button onclick="salvarEdicao({{ cards[0]['id'] }}, '{{ cards[0]['card_type'] }}')" 
+                    class="bg-purple-600 text-white px-4 py-2 rounded-xl flex-1 hover:bg-purple-700 transition">
+                    Salvar
+                </button>
+                <button onclick="toggleEdit()" 
+                    class="border px-4 py-2 rounded-xl flex-1 hover:bg-gray-100 transition">
+                    Cancelar
+                </button>
+            </div>
+        </div>
     </div>
 
     {% else %}

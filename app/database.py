@@ -236,12 +236,19 @@ def update_deck(name, description, deck_id):
     conn.commit()
     conn.close()
 
-def update_card(front, back, card_id):
+def update_card(front, back, card_id, options=None):
     conn = get_connection()
-    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    cursor.execute("UPDATE cards SET front = %s, back = %s WHERE id = %s",
-        (front, back, card_id)
-    )
+    cursor = conn.cursor()
+    if options is not None:
+        cursor.execute(
+            "UPDATE cards SET front = %s, back = %s, options = %s WHERE id = %s",
+            (front, back, json.dumps(options), card_id)
+        )
+    else:
+        cursor.execute(
+            "UPDATE cards SET front = %s, back = %s WHERE id = %s",
+            (front, back, card_id)
+        )
     conn.commit()
     conn.close()
 

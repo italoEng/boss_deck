@@ -3,6 +3,7 @@ from flask import render_template
 from flask import request
 from flask import redirect
 from flask import current_app
+from flask import jsonify
 from app.database import create_card, update_card, get_due_cards, update_card_review, delete_card
 from app.database import get_deck
 from werkzeug.utils import secure_filename
@@ -103,13 +104,21 @@ def cards(deck_id):
             
     return render_template("cards.html", cards=[card_atual], deck_id=deck_id, total=total, index=index)
 
+
 @card_bp.route("/deck/<int:deck_id>/cards/<int:card_id>", methods=["POST"])
 def review_card(deck_id, card_id):
     quality = int(request.form["quality"])
+    next_index = request.form.get("next_index", 0, type=int)
     update_card_review(card_id, quality, deck_id)
-    return redirect(f"/deck/{deck_id}/cards")
+    return redirect(f"/deck/{deck_id}/cards?index={next_index}")
 
 @card_bp.route("/deck/<int:deck_id>/cards/<int:card_id>/delete", methods=["POST"])
 def card_excluir(deck_id, card_id):
     delete_card(card_id)
     return redirect(f"/deck/{deck_id}#lista")
+
+@card_bp.route("/api/card/<int:card_id>/edit", methods=["POST"])
+def api_edit_card(card_id):
+    data = request.json
+    update_card(data["front"], data["back"], card_id, data.get("options"))
+    return jsonify({"ok": True})
