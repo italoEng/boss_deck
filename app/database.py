@@ -324,7 +324,38 @@ def delete_cards_bulk(ids):
     conn.commit()
     conn.close()
 
+def get_review_stats(period='day'):
+    conn = get_connection()
+    cursor = conn.cursor()
     
+    if period == 'day':
+        trunc = "DATE(reviewed_at)"
+        where = "reviewed_at >= CURRENT_DATE - INTERVAL '30 days'"
+    elif period == 'week':
+        trunc = "DATE_TRUNC('week', reviewed_at)"
+        where = "reviewed_at >= CURRENT_DATE - INTERVAL '12 weeks'"
+    elif period == 'month':
+        trunc = "DATE_TRUNC('month', reviewed_at)"
+        where = "reviewed_at >= CURRENT_DATE - INTERVAL '12 months'"
+    else:
+        trunc = "DATE_TRUNC('year', reviewed_at)"
+        where = "reviewed_at >= CURRENT_DATE - INTERVAL '5 years'"
+
+    cursor.execute(f"""
+        SELECT 
+            {trunc}::text AS periodo,
+            d.name AS deck_name,
+            COUNT(*) AS total
+        FROM review_log rl
+        JOIN decks d ON d.id = rl.deck_id
+        WHERE {where}
+        GROUP BY {trunc}, d.name
+        ORDER BY periodo
+    """)
+    data = cursor.fetchall()
+    conn.close()
+    return [{"periodo": r[0], "deck_name": r[1], "total": r[2]} for r in data] 
+
 if __name__ == "__main__":
     init_db()
     print("Banco iniciado!")

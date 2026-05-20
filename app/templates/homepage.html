@@ -6,8 +6,10 @@
     <link rel="icon" type="image/png" href="static/images/logo.png">
     <title>Boss Deck</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>tailwind.config = {darkMode: 'class'}</script>
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+
 
 </head>
 <body class="bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-400 transition-colors duration-300">
@@ -146,6 +148,24 @@
         <h2 class=" font-bold mb-4">Atividade</h2>
         <div id="heatmap" class="flex gap-1"></div>
     </div>
+
+    <!-- Filtro de período -->
+    <div class="flex justify-center gap-2 p-4">
+        <a href="/?period=day" class="px-4 py-2 rounded-lg border {% if period == 'day' %}bg-purple-700 text-white{% endif %}">Dia</a>
+        <a href="/?period=week" class="px-4 py-2 rounded-lg border {% if period == 'week' %}bg-purple-700 text-white{% endif %}">Semana</a>
+        <a href="/?period=month" class="px-4 py-2 rounded-lg border {% if period == 'month' %}bg-purple-700 text-white{% endif %}">Mês</a>
+        <a href="/?period=year" class="px-4 py-2 rounded-lg border {% if period == 'year' %}bg-purple-700 text-white{% endif %}">Ano</a>
+    </div>
+
+    <!-- Gráfico -->
+    <div class="p-8">
+        <h2 class="font-bold mb-4">Revisões por Deck</h2>
+        <canvas id="barChart"></canvas>
+    </div>
+
+    <script>
+    const REVIEW_STATS = {{ review_stats | tojson }};
+    </script>
 
     <div id="modal" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
         <div class="bg-white w-full max-w-2xl rounded-2xl shadow-xl p-6">

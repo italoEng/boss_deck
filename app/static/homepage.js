@@ -172,3 +172,34 @@ window.onload = function() {
         }, 3000);
     }
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    if (!REVIEW_STATS.length) return;
+
+    // agrupa por período e deck
+    const periodos = [...new Set(REVIEW_STATS.map(r => r.periodo))];
+    const decks    = [...new Set(REVIEW_STATS.map(r => r.deck_name))];
+
+    const cores = ['#7c3aed','#2563eb','#059669','#d97706','#dc2626','#0891b2','#9333ea'];
+
+    const datasets = decks.map((deck, i) => ({
+        label: deck,
+        data: periodos.map(p => {
+            const row = REVIEW_STATS.find(r => r.periodo === p && r.deck_name === deck);
+            return row ? row.total : 0;
+        }),
+        backgroundColor: cores[i % cores.length],
+    }));
+
+    new Chart(document.getElementById('barChart'), {
+        type: 'bar',
+        data: { labels: periodos, datasets },
+        options: {
+            responsive: true,
+            scales: {
+                x: { stacked: true },
+                y: { stacked: true, beginAtZero: true }
+            }
+        }
+    });
+});
