@@ -1,22 +1,23 @@
 function toggleTheme() {
     const html = document.getElementById('html-root');
     const btn = document.getElementById('btn-theme');
+    const icon = btn.querySelector('iconify-icon');
     
     if (html.classList.contains('dark')) {
         html.classList.remove('dark');
-        btn.textContent = '🌙';
+        icon.setAttribute('icon', 'mage:moon');
         localStorage.setItem('theme', 'light');
     } else {
         html.classList.add('dark');
-        btn.textContent = '☀️';
+        icon.setAttribute('icon', 'mage:sun');
         localStorage.setItem('theme', 'dark');
     }
 }
 
-// carrega o tema salvo
 window.onload = function() {
+    const icon = document.querySelector('#btn-theme iconify-icon');
     if (localStorage.getItem('theme') === 'dark') {
         document.getElementById('html-root').classList.add('dark');
-        document.getElementById('btn-theme').textContent = '☀️';
+        icon.setAttribute('icon', 'mage:sun');
     }
 }
