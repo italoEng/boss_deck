@@ -157,10 +157,11 @@
         <a href="/?period=year" class="px-4 py-2 rounded-lg border {% if period == 'year' %}bg-purple-700 text-white{% endif %}">Ano</a>
     </div>
 
-    <!-- Gráfico -->
-    <div class="p-8">
+    <div class="flex flex-col items-center px-8 pb-8">
         <h2 class="font-bold mb-4">Revisões por Deck</h2>
-        <canvas id="barChart"></canvas>
+        <div style="width: 100%; max-width: 1200px">
+            <canvas id="barChart" style="height: 400px"></canvas>
+        </div>
     </div>
 
     <script>
