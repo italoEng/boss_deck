@@ -86,9 +86,10 @@ def cards(deck_id):
     if not deck:
         return redirect("/?erro=Baralho+nao+encontrado")
     
-    cards_list = get_due_cards(deck_id)       
+    cards_list = get_due_cards(deck_id)     
     total = len(cards_list)
     index = request.args.get('index', 0, type=int)
+    print(f"index: {index}, total: {total}, cards_list: {len(cards_list)}")  
 
     if index >= total:
         return redirect(f"/deck/{deck_id}")
@@ -110,6 +111,14 @@ def review_card(deck_id, card_id):
     quality = int(request.form["quality"])
     next_index = request.form.get("next_index", 0, type=int)
     update_card_review(card_id, quality, deck_id)
+    
+    cards_list = get_due_cards(deck_id)
+    if next_index >= len(cards_list):
+        next_index = 0
+    
+    if not cards_list:
+        return redirect(f"/deck/{deck_id}?concluido=1")
+    
     return redirect(f"/deck/{deck_id}/cards?index={next_index}")
 
 @card_bp.route("/deck/<int:deck_id>/cards/<int:card_id>/delete", methods=["POST"])
