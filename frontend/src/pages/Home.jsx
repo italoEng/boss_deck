@@ -22,7 +22,7 @@ function Home() {
   };
 
   const fetchDecks = () => {
-  fetch("http://localhost:5000/api/decks")
+  fetch("/api/decks")
     .then((res) => res.json())
     .then((data) => {
       setDecks(data.decks);
@@ -32,7 +32,7 @@ function Home() {
 
   const criarDeck = () => {
     if (!newDeck.name.trim()) return;
-    fetch("http://localhost:5000/api/decks/new", {
+    fetch("/api/decks/new", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newDeck)
@@ -46,7 +46,7 @@ function Home() {
   };
 
     useEffect(() => {
-    fetch("http://localhost:5000/api/decks")
+    fetch("/api/decks")
       .then((res) => res.json())
       .then((data) => {
         setDecks(data.decks);
