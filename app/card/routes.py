@@ -22,7 +22,7 @@ def allowed_image(filename):
 def allowed_audio(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_AUDIO
 
-@card_bp.route("/deck/<int:deck_id>/cards/new", methods=["POST"])
+@card_bp.route("/api/deck/<int:deck_id>/cards/new", methods=["POST"])
 def new_card(deck_id):
     front = request.form["front"].strip()
     back = request.form["back"].strip()
@@ -71,20 +71,38 @@ def new_card(deck_id):
     
     return redirect(f"/deck/{deck_id}#modal-aberto")
 
-@card_bp.route("/deck/<int:deck_id>/cards/<int:card_id>/edit", methods=["POST"])
+
+@card_bp.route("/api/decks/<int:deck_id>/cards/new", methods=["POST"])
+def api_new_card(deck_id):
+    data = request.json
+    front = data.get("front", "").strip()
+    back = data.get("back", "").strip()
+    card_type = data.get("card_type", "basic")
+    options = data.get("options", None)
+
+    if not front and not back:
+        return jsonify({"error": "Card precisa de frente e verso"}), 400
+
+    try:
+        create_card(deck_id, front, back, "", "", card_type, options)
+        return jsonify({"ok": True})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@card_bp.route("/api/deck/<int:deck_id>/cards/<int:card_id>/edit", methods=["POST"])
 def editar_card(deck_id, card_id):
     front = request.form["front"]
     back = request.form["back"]
     update_card(front, back, card_id)
-    return redirect(f"/deck/{deck_id}#lista")
+    return jsonify({"ok": True})
 
 
-@card_bp.route("/deck/<int:deck_id>/cards")
+@card_bp.route("/api/deck/<int:deck_id>/cards")
 def cards(deck_id):
     deck = get_deck(deck_id)
     
     if not deck:
-        return redirect("/?erro=Baralho+nao+encontrado")
+        return jsonify({"error": "Baralho não encontrado"}), 404
     
     cards_list = get_due_cards(deck_id)     
     total = len(cards_list)
@@ -105,26 +123,44 @@ def cards(deck_id):
             
     return render_template("cards.html", cards=[card_atual], deck_id=deck_id, total=total, index=index)
 
+@card_bp.route("/api/decks/<int:deck_id>/study")
+def api_study(deck_id):
+    import json, random
+    cards_list = get_due_cards(deck_id)
+    index = request.args.get('index', 0, type=int)
+    total = len(cards_list)
+    
+    if not cards_list or index >= total:
+        return jsonify({"done": True, "total": total})
+    
+    card = dict(cards_list[index])
+    if card.get("options"):
+        options = card["options"]
+        if isinstance(options, str):
+            options = json.loads(options)
+        random.shuffle(options)
+        card["options"] = options
+    
+    return jsonify({"card": card, "index": index, "total": total, "done": False})
 
-@card_bp.route("/deck/<int:deck_id>/cards/<int:card_id>", methods=["POST"])
-def review_card(deck_id, card_id):
-    quality = int(request.form["quality"])
-    next_index = request.form.get("next_index", 0, type=int)
+@card_bp.route("/api/decks/<int:deck_id>/cards/<int:card_id>/review", methods=["POST"])
+def api_review_card(deck_id, card_id):
+    data = request.json
+    quality = int(data["quality"])
+    next_index = int(data.get("next_index", 0))
     update_card_review(card_id, quality, deck_id)
     
     cards_list = get_due_cards(deck_id)
-    if next_index >= len(cards_list):
-        next_index = 0
     
-    if not cards_list:
-        return redirect(f"/deck/{deck_id}?concluido=1")
+    if not cards_list or next_index >= len(cards_list):
+        return jsonify({"done": True})
     
-    return redirect(f"/deck/{deck_id}/cards?index={next_index}")
+    return jsonify({"done": False, "next_index": next_index})
 
-@card_bp.route("/deck/<int:deck_id>/cards/<int:card_id>/delete", methods=["POST"])
+@card_bp.route("/api/deck/<int:deck_id>/cards/<int:card_id>/delete", methods=["POST"])
 def card_excluir(deck_id, card_id):
     delete_card(card_id)
-    return redirect(f"/deck/{deck_id}#lista")
+    return jsonify({"ok": True})
 
 @card_bp.route("/api/card/<int:card_id>/edit", methods=["POST"])
 def api_edit_card(card_id):
