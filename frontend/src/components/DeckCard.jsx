@@ -55,7 +55,7 @@ function DeckCard({ deck, editMode }) {
               e.preventDefault();
               e.stopPropagation();
 
-              fetch(`http://localhost:5000/api/decks/${deck.id}/delete`, {
+              fetch(`/api/decks/${deck.id}/delete`, {
                 method: "POST",
               })
               .then(() => {
