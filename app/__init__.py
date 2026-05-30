@@ -9,6 +9,9 @@ def create_app():
     load_dotenv()
 
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    print(f"BASE_DIR: {BASE_DIR}")
+    print(f"static_folder: {os.path.join(BASE_DIR, 'frontend', 'dist')}")
+    print(f"index exists: {os.path.exists(os.path.join(BASE_DIR, 'frontend', 'dist', 'index.html'))}")
 
     app = Flask(
         __name__,
