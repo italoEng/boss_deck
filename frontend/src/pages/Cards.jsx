@@ -5,49 +5,54 @@ import Navbar from '../components/Navbar'
 function Cards() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const [card, setCard] = useState(null)
+  const [cards, setCards] = useState([])
   const [index, setIndex] = useState(0)
-  const [total, setTotal] = useState(0)
   const [revealed, setRevealed] = useState(false)
   const [done, setDone] = useState(false)
-  const [answered, setAnswered] = useState(null) // index da alternativa escolhida
+  const [answered, setAnswered] = useState(null)
+  const [loading, setLoading] = useState(true)
 
-  const fetchCard = (idx) => {
-    fetch(`/api/decks/${id}/study?index=${idx}`)
+  useEffect(() => {
+    fetch(`/api/decks/${id}/study`)
       .then(res => res.json())
       .then(data => {
-        if (data.done) {
+        if (data.done || !data.cards.length) {
           setDone(true)
         } else {
-          setCard(data.card)
-          setIndex(data.index)
-          setTotal(data.total)
-          setRevealed(false)
-          setAnswered(null)
+          setCards(data.cards)
         }
+        setLoading(false)
       })
-  }
+  }, [id])
 
-  useEffect(() => { fetchCard(0) }, [id])
+  const card = cards[index]
+  const total = cards.length
 
   const review = (quality) => {
     fetch(`/api/decks/${id}/cards/${card.id}/review`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ quality, next_index: index + 1 })
+      body: JSON.stringify({ quality })
     })
-    .then(res => res.json())
-    .then(data => {
-      if (data.done) setDone(true)
-      else fetchCard(data.next_index)
+    .then(() => {
+      const next = index + 1
+      if (next >= total) {
+        setDone(true)
+      } else {
+        setIndex(next)
+        setRevealed(false)
+        setAnswered(null)
+      }
     })
   }
 
-  const responderAlternativa = (optionIndex, correct) => {
+  const responderAlternativa = (optionIndex) => {
     if (answered !== null) return
     setAnswered(optionIndex)
     setRevealed(true)
   }
+
+  if (loading) return <p className="p-8 text-gray-500">Carregando...</p>
 
   if (done) return (
     <div className="flex flex-col items-center justify-center h-screen">
@@ -60,7 +65,7 @@ function Cards() {
     </div>
   )
 
-  if (!card) return <p className="p-8 text-gray-500">Carregando...</p>
+  if (!card) return null
 
   return (
     <div>
@@ -71,11 +76,9 @@ function Cards() {
 
       <div className="w-full max-w-3xl bg-white shadow-lg rounded-2xl p-8 mx-auto mt-8">
         
-        {/* Frente */}
         <div className="text-center text-2xl font-semibold text-gray-800"
           dangerouslySetInnerHTML={{ __html: card.front }} />
 
-        {/* Múltipla escolha */}
         {card.card_type === 'multiple_choice' && card.options && (
           <div className="mt-8 flex flex-col gap-3">
             {card.options.map((option, i) => {
@@ -87,7 +90,7 @@ function Cards() {
                 cls += " hover:bg-indigo-50 hover:border-indigo-300"
               }
               return (
-                <button key={i} onClick={() => responderAlternativa(i, option.correct)}
+                <button key={i} onClick={() => responderAlternativa(i)}
                   className={cls} disabled={answered !== null}>
                   {option.text}
                 </button>
@@ -96,13 +99,11 @@ function Cards() {
           </div>
         )}
 
-        {/* Verso */}
         {revealed && (
           <div className="mt-4 text-center text-xl text-gray-600"
             dangerouslySetInnerHTML={{ __html: card.back }} />
         )}
 
-        {/* Card básico - botão revelar */}
         {card.card_type !== 'multiple_choice' && !revealed && (
           <div className="flex justify-center mt-6">
             <button onClick={() => setRevealed(true)}
@@ -112,7 +113,6 @@ function Cards() {
           </div>
         )}
 
-        {/* Botões de avaliação */}
         {revealed && (
           <div className="flex justify-center gap-4 mt-8">
             <button onClick={() => review(0)} className="px-5 py-2 rounded-lg bg-gray-100 hover:bg-red-200 transition">Errei</button>
