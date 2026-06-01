@@ -127,21 +127,22 @@ def cards(deck_id):
 def api_study(deck_id):
     import json, random
     cards_list = get_due_cards(deck_id)
-    index = request.args.get('index', 0, type=int)
-    total = len(cards_list)
     
-    if not cards_list or index >= total:
-        return jsonify({"done": True, "total": total})
+    if not cards_list:
+        return jsonify({"done": True, "cards": []})
     
-    card = dict(cards_list[index])
-    if card.get("options"):
-        options = card["options"]
-        if isinstance(options, str):
-            options = json.loads(options)
-        random.shuffle(options)
-        card["options"] = options
+    result = []
+    for c in cards_list:
+        card = dict(c)
+        if card.get("options"):
+            options = card["options"]
+            if isinstance(options, str):
+                options = json.loads(options)
+            random.shuffle(options)
+            card["options"] = options
+        result.append(card)
     
-    return jsonify({"card": card, "index": index, "total": total, "done": False})
+    return jsonify({"done": False, "cards": result})
 
 @card_bp.route("/api/decks/<int:deck_id>/cards/<int:card_id>/review", methods=["POST"])
 def api_review_card(deck_id, card_id):
