@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { MathJaxContext } from "better-react-mathjax";
+import "./index.css";
 import App from "./App";
 
 const config = {
