@@ -81,9 +81,9 @@ function Cards() {
       <div className="w-full max-w-3xl bg-white shadow-lg rounded-2xl p-8 mx-auto mt-8">
         
       <div className="text-center text-2xl font-semibold text-gray-800">
-        <MathJax>
-          {"\\(x^2+y^2=z^2\\)"}
-        </MathJax>
+            <MathJax dynamic>
+              {card.front}
+            </MathJax>
       </div>
 
         {card.card_type === 'multiple_choice' && card.options && (
