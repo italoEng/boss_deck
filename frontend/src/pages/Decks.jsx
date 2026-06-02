@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
+import CardEditor from '../components/CardEditor'
 import {Plus} from "lucide-react";
 import {Play} from "lucide-react";
 import {Edit} from "lucide-react";
@@ -130,13 +131,15 @@ function Decks() {
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-white w-full max-w-md rounded-2xl shadow-xl p-6">
             <h2 className="text-2xl font-bold text-gray-800 mb-6">Novo Card</h2>
-            <textarea
-              placeholder="Frente"
-              value={newCard.front}
-              onChange={e => setNewCard({ ...newCard, front: e.target.value })}
-              className="w-full border rounded-xl px-4 py-2 mb-3 focus:outline-none focus:ring-2 focus:ring-purple-500"
-              rows={3}
+            <CardEditor
+              onChange={(html) =>
+                setNewCard(prev => ({
+                  ...prev,
+                  front: html
+                }))
+              }
             />
+
             <textarea
               placeholder="Verso"
               value={newCard.back}

@@ -3,3 +3,12 @@
 ::-webkit-scrollbar {
   display: none;
 }
+
+.ProseMirror {
+  outline: none;
+  border: none;
+}
+
+.ProseMirror:focus {
+  outline: none;
+}
