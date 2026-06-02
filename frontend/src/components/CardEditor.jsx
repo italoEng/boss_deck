@@ -18,7 +18,56 @@ export default function CardEditor({ onChange }) {
         onClick={() => editor?.chain().focus().toggleBold().run()}
         className="border px-3 py-1 rounded mb-2">
         B
-    </button>   
+    </button>
+
+    <button
+        type="button"
+        onClick={() => editor?.chain().focus().toggleItalic().run()}
+        className="border px-3 py-1 rounded mb-2">
+        I
+    </button>
+
+    <button
+        type="button"
+        onClick={() => editor?.chain().focus().toggleUnderline().run()}
+        className="border px-3 py-1 rounded mb-2">
+        U
+    </button>
+
+    <button
+        type="button"
+        onClick={() => editor?.chain().focus().toggleStrike().run()}
+        className="border px-3 py-1 rounded mb-2">
+        S
+    </button>
+
+    <button
+        type="button"
+        onClick={() => editor?.chain().focus().toggleBulletList().run()}
+        className="border px-3 py-1 rounded mb-2">
+        List
+    </button>
+
+    <button
+        type="button"
+        onClick={() => editor?.chain().focus().toggleOrderedList().run()}
+        className="border px-3 py-1 rounded mb-2">
+        OL
+    </button>
+
+    <button
+        type="button"
+        onClick={() => editor?.chain().focus().toggleBlockquote().run()}
+        className="border px-3 py-1 rounded mb-2">
+        Quote
+    </button>
+
+    <button
+        type="button"
+        onClick={() => editor?.chain().focus().toggleCodeBlock().run()}
+        className="border px-3 py-1 rounded mb-2">
+        Code
+    </button>
 
       <EditorContent editor={editor} />
     </div>

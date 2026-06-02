@@ -7,9 +7,10 @@ import App from "./App";
 const config = {
   loader: { load: ["input/tex", "output/chtml"] },
   tex: {
-    inlineMath: [["$", "$"]],
-    displayMath: [["$$", "$$"]],
+    inlineMath: [["$", "$"], ["\\(", "\\)"]],
+    displayMath: [["$$", "$$"], ["\\[", "\\]"]],
   },
+  svg: { fontCache: 'global' }
 };
 
 ReactDOM.createRoot(document.getElementById("root")).render(

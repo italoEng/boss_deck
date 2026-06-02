@@ -1,7 +1,35 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef, useContext } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { MathJax } from "better-react-mathjax";
+import { MathJaxBaseContext } from "better-react-mathjax";
 import Navbar from '../components/Navbar'
+
+function MathJaxHtml({ html, className }) {
+  const containerRef = useRef(null)
+  const mjContext = useContext(MathJaxBaseContext)
+
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) return
+    container.innerHTML = html || ''
+    if (!mjContext?.promise) return
+
+    let isMounted = true
+    mjContext.promise.then((mathJax) => {
+      if (!isMounted || !container) return
+      if (typeof mathJax.typesetPromise === 'function') {
+        mathJax.typesetPromise([container]).catch(console.error)
+      } else if (typeof mathJax.typeset === 'function') {
+        mathJax.typeset([container])
+      }
+    }).catch(console.error)
+
+    return () => {
+      isMounted = false
+    }
+  }, [html, mjContext])
+
+  return <div ref={containerRef} className={className} />
+}
 
 function Cards() {
   const { id } = useParams()
@@ -28,6 +56,10 @@ function Cards() {
 
   const card = cards[index]
   const total = cards.length
+
+  const renderCardContent = (html, className = '') => (
+    <MathJaxHtml html={html} className={className} />
+  )
 
   const review = (quality) => {
     fetch(`/api/decks/${id}/cards/${card.id}/review`, {
@@ -79,12 +111,9 @@ function Cards() {
       </div>
 
       <div className="w-full max-w-3xl bg-white shadow-lg rounded-2xl p-8 mx-auto mt-8">
-        
-      <div className="text-center text-2xl font-semibold text-gray-800">
-            <MathJax dynamic>
-              {card.front}
-            </MathJax>
-      </div>
+        <div className="text-center text-2xl font-semibold text-gray-800">
+          {renderCardContent(card.front)}
+        </div>
 
         {card.card_type === 'multiple_choice' && card.options && (
           <div className="mt-8 flex flex-col gap-3">
@@ -99,7 +128,7 @@ function Cards() {
               return (
                 <button key={i} onClick={() => responderAlternativa(i)}
                   className={cls} disabled={answered !== null}>
-                  {option.text}
+                  <MathJaxHtml html={option.text} />
                 </button>
               )
             })}
@@ -108,9 +137,7 @@ function Cards() {
 
         {revealed && (
           <div className="mt-4 text-center text-xl text-gray-600">
-            <MathJax dynamic>
-              {card.back}
-            </MathJax>
+            {renderCardContent(card.back)}
           </div>
         )}
 
@@ -126,8 +153,8 @@ function Cards() {
         {revealed && (
           <div className="flex justify-center gap-4 mt-8">
             <button onClick={() => review(0)} className="px-5 py-2 rounded-lg bg-gray-100 hover:bg-red-200 transition">Errei</button>
-            <button onClick={() => review(3)} className="px-5 py-2 rounded-lg bg-gray-100 hover:bg-yellow-200 transition">Difícil</button>
             <button onClick={() => review(5)} className="px-5 py-2 rounded-lg bg-gray-100 hover:bg-green-200 transition">Fácil</button>
+            <button onClick={() => review(3)} className="px-5 py-2 rounded-lg bg-gray-100 hover:bg-yellow-200 transition">Difícil</button>
           </div>
         )}
       </div>
