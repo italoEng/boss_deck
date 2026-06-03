@@ -141,13 +141,15 @@ function Decks() {
               }
             />
 
-            <textarea
-              placeholder="Verso"
-              value={newCard.back}
-              onChange={e => setNewCard({ ...newCard, back: e.target.value })}
-              className="w-full border rounded-xl px-4 py-2 mb-6 focus:outline-none focus:ring-2 focus:ring-purple-500"
-              rows={3}
-            />
+            <CardEditor
+              onChange={(html) =>
+                setNewCard(prev => ({
+                  ...prev,
+                  back: html
+                }))
+              }
+            />  
+
             <button onClick={criarCard}
               className="w-full bg-purple-600 text-white py-3 rounded-xl hover:bg-purple-700 transition mb-2">
               Criar
