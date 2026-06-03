@@ -28,7 +28,8 @@ function MathJaxHtml({ html, className }) {
     }
   }, [html, mjContext])
 
-  return <div ref={containerRef} className={className} />
+  const classNames = ['math-content', className].filter(Boolean).join(' ')
+  return <div ref={containerRef} className={classNames} />
 }
 
 function Cards() {
@@ -41,6 +42,15 @@ function Cards() {
   const [answered, setAnswered] = useState(null)
   const [loading, setLoading] = useState(true)
 
+  const shuffle = (items) => {
+    const array = [...items]
+    for (let i = array.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[array[i], array[j]] = [array[j], array[i]]
+    }
+    return array
+  }
+
   useEffect(() => {
     fetch(`/api/decks/${id}/study`)
       .then(res => res.json())
@@ -48,7 +58,7 @@ function Cards() {
         if (data.done || !data.cards.length) {
           setDone(true)
         } else {
-          setCards(data.cards)
+          setCards(shuffle(data.cards))
         }
         setLoading(false)
       })

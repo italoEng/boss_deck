@@ -1,4 +1,5 @@
 import logo from "../assets/logo2.png";
+import { Link } from "react-router-dom";
 import { Settings } from "lucide-react";
 import {Moon} from "lucide-react";
 
@@ -7,13 +8,13 @@ function Navbar({ editMode, setEditMode }) {
     <nav className="bg-purple-700 border-b border-purple-800 
         px-8 py-4 flex justify-between items-center">
 
-        <div className="flex items-center gap-3">
+        <Link to="/" className="flex items-center gap-3">
             <img
             src={logo}
             alt="Boss Deck"
             className="h-12 w-12 rounded"
             />
-        </div>
+        </Link>
 
       <div className="flex items-center gap-3">
 

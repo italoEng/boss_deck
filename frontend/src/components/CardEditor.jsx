@@ -11,8 +11,7 @@ export default function CardEditor({ onChange }) {
   });
 
   return (
-    <div className="border rounded-xl p-3 mb-3">
-
+   <div> 
     <button
         type="button"
         onClick={() => editor?.chain().focus().toggleBold().run()}
@@ -43,7 +42,8 @@ export default function CardEditor({ onChange }) {
 
     <button
         type="button"
-        onClick={() => editor?.chain().focus().toggleBulletList().run()}
+        onClick={() => editor?.chain().focus().toggleBulletList().run()
+        }
         className="border px-3 py-1 rounded mb-2">
         List
     </button>
@@ -69,7 +69,9 @@ export default function CardEditor({ onChange }) {
         Code
     </button>
 
+    <div className="border rounded-xl p-3 mb-3">
       <EditorContent editor={editor} />
+    </div>
     </div>
   );
 }
