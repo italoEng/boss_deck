@@ -22,64 +22,26 @@ def allowed_image(filename):
 def allowed_audio(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_AUDIO
 
+
 @card_bp.route("/api/decks/<int:deck_id>/cards/new", methods=["POST"])
-def new_card(deck_id):
-    data = request.get_json()
+def api_new_card(deck_id):
+    data = request.json
 
     front = data.get("front", "").strip()
     back = data.get("back", "").strip()
     card_type = data.get("card_type", "basic")
-
-    front_img = ""
-    front_audio = ""
-
-    options = None
-    if card_type == "multiple_choice":
-        options = data.get("options", [])
-
-    if not front and not back:
-        return jsonify({
-            "success": False,
-            "error": "Card precisa ter frente ou verso"
-        }), 400
+    options = data.get("options", None)
 
     try:
         create_card(
             deck_id,
             front,
             back,
-            front_img,
-            front_audio,
+            "",
+            "",
             card_type,
             options
         )
-
-        return jsonify({
-            "success": True
-        })
-
-    except Exception as e:
-        print(f"Erro ao criar card: {e}")
-
-        return jsonify({
-            "success": False,
-            "error": str(e)
-        }), 500
-
-
-@card_bp.route("/api/decks/<int:deck_id>/cards/new", methods=["POST"])
-def api_new_card(deck_id):
-    data = request.json
-    front = data.get("front", "").strip()
-    back = data.get("back", "").strip()
-    card_type = data.get("card_type", "basic")
-    options = data.get("options", None)
-
-    if not front and not back:
-        return jsonify({"error": "Card precisa de frente e verso"}), 400
-
-    try:
-        create_card(deck_id, front, back, "", "", card_type, options)
         return jsonify({"ok": True})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
