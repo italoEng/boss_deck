@@ -18,6 +18,10 @@ function Decks() {
   const [showTable, setShowTable] = useState(false)
   const [showModal, setShowModal] = useState(false)
   const [newCard, setNewCard] = useState({ front: "", back: "", card_type: "basic" })
+  const [options, setOptions] = useState([
+    { text: '', correct: true },
+    { text: '', correct: false }
+  ])
 
   const criarCard = () => {
     if (!newCard.front.trim() && !newCard.back.trim()) return
@@ -132,6 +136,21 @@ function Decks() {
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-white w-full max-w-md rounded-2xl shadow-xl p-6">
             <h2 className="text-2xl font-bold text-gray-800 mb-6">Novo Card</h2>
+
+            {/* Tipo do card */}
+            <div className="flex gap-2 mb-4">
+              <button
+                onClick={() => setNewCard(prev => ({ ...prev, card_type: 'basic' }))}
+                className={`flex-1 py-2 rounded-lg border-2 font-bold transition ${newCard.card_type === 'basic' ? 'bg-purple-700 border-purple-700 text-white' : 'border-gray-200 text-gray-500'}`}>
+                📝 Básico
+              </button>
+              <button
+                onClick={() => setNewCard(prev => ({ ...prev, card_type: 'multiple_choice' }))}
+                className={`flex-1 py-2 rounded-lg border-2 font-bold transition ${newCard.card_type === 'multiple_choice' ? 'bg-purple-700 border-purple-700 text-white' : 'border-gray-200 text-gray-500'}`}>
+                🔤 Múltipla Escolha
+              </button>
+            </div>
+
             <CardEditor
               onChange={(html) =>
                 setNewCard(prev => ({
@@ -140,6 +159,35 @@ function Decks() {
                 }))
               }
             />
+
+            {/* Alternativas */}
+            {newCard.card_type === 'multiple_choice' && (
+              <div className="mt-4">
+                <label className="text-sm font-medium text-gray-600 mb-2 block">Alternativas</label>
+                {options.map((opt, i) => (
+                  <div key={i} className="flex items-center gap-2 mb-2">
+                    <input
+                      type="radio"
+                      name="correct"
+                      checked={opt.correct}
+                      onChange={() => setOptions(options.map((o, j) => ({ ...o, correct: i === j })))}
+                    />
+                    <input
+                      type="text"
+                      value={opt.text}
+                      onChange={e => setOptions(options.map((o, j) => j === i ? { ...o, text: e.target.value } : o))}
+                      placeholder={`Alternativa ${i + 1}`}
+                      className="border w-full p-2 rounded-xl"
+                    />
+                  </div>
+                ))}
+                <button
+                  onClick={() => setOptions([...options, { text: '', correct: false }])}
+                  className="text-purple-600 text-sm font-bold mt-1">
+                  + Adicionar alternativa
+                </button>
+              </div>
+            )}
 
             <CardEditor
               onChange={(html) =>
