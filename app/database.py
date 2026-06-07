@@ -356,6 +356,7 @@ def get_review_stats(period='day'):
     conn.close()
     return [{"periodo": r[0], "deck_name": r[1], "total": r[2]} for r in data] 
 
+
 if __name__ == "__main__":
     init_db()
     print("Banco iniciado!")

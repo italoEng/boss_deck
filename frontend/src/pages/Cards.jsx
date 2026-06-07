@@ -110,8 +110,9 @@ function Cards() {
 
   if (!card) return null
 
-  console.log("CARD FRONT:", card.front);
-  console.log("CARD BACK:", card.back);
+  console.log("CARD COMPLETO:", card)
+  console.log("CARD TYPE:", card.card_type)
+  console.log("CARD OPTIONS:", card.options)
 
   return (
     <div>
