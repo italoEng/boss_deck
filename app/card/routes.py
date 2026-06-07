@@ -22,54 +22,49 @@ def allowed_image(filename):
 def allowed_audio(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_AUDIO
 
-@card_bp.route("/api/deck/<int:deck_id>/cards/new", methods=["POST"])
+@card_bp.route("/api/decks/<int:deck_id>/cards/new", methods=["POST"])
 def new_card(deck_id):
-    front = request.form["front"].strip()
-    back = request.form["back"].strip()
-    card_type = request.form.get("card_type", "basic")
+    data = request.get_json()
+
+    front = data.get("front", "").strip()
+    back = data.get("back", "").strip()
+    card_type = data.get("card_type", "basic")
+
     front_img = ""
     front_audio = ""
-    options = None
 
+    options = None
     if card_type == "multiple_choice":
-        texts = request.form.getlist("option_text")
-        correct = request.form.get("correct_option")
-        options = [
-            {"text": text, "correct": str(i) == correct}
-            for i, text in enumerate(texts)
-            if text.strip()
-        ]
+        options = data.get("options", [])
 
     if not front and not back:
-        return redirect(f"/deck/{deck_id}?erro=Card+precisa+de+frente+e+verso")
-
-    if "front_img" in request.files:
-        file = request.files["front_img"]
-        if file.filename != "":
-            if not allowed_image(file.filename):
-                return redirect(f"/deck/{deck_id}?erro=Formato+de+imagem+invalido")
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(current_app.config["UPLOAD_FOLDER"], filename))
-            front_img = f'uploads/{filename}'
-    if not front_img:
-        front_img = request.form.get("front_img_url", "")
-
-    if "front_audio" in request.files:
-        file = request.files["front_audio"]
-        if file.filename != "":
-            if not allowed_audio(file.filename):
-                return redirect(f"/deck/{deck_id}?erro=Formato+de+audio+invalido")
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(current_app.config["UPLOAD_FOLDER"], filename))
-            front_audio = f'uploads/{filename}'
+        return jsonify({
+            "success": False,
+            "error": "Card precisa ter frente ou verso"
+        }), 400
 
     try:
-        create_card(deck_id, front, back, front_img, front_audio, card_type, options)
+        create_card(
+            deck_id,
+            front,
+            back,
+            front_img,
+            front_audio,
+            card_type,
+            options
+        )
+
+        return jsonify({
+            "success": True
+        })
+
     except Exception as e:
         print(f"Erro ao criar card: {e}")
-        return redirect("/?erro=Erro+ao+criar+card")
-    
-    return redirect(f"/deck/{deck_id}#modal-aberto")
+
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
 
 
 @card_bp.route("/api/decks/<int:deck_id>/cards/new", methods=["POST"])

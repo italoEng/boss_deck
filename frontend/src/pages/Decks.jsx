@@ -25,34 +25,32 @@ function Decks() {
 
   const criarCard = () => {
     if (!newCard.front.trim() && !newCard.back.trim()) return
+
+    const body = { ...newCard }
+    if (newCard.card_type === 'multiple_choice') {
+      body.options = options.filter(o => o.text.trim())
+    }
+
     fetch(`/api/decks/${id}/cards/new`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newCard)
+      body: JSON.stringify(body)
     })
     .then(res => res.json())
     .then(() => {
-
-      setShowModal(false);
-
-      setNewCard({
-        front: "",
-        back: "",
-        card_type: "basic"
-      });
+      setShowModal(false)
+      setNewCard({ front: "", back: "", card_type: "basic" })
+      setOptions([{ text: '', correct: true }, { text: '', correct: false }])
 
       fetch(`/api/decks/${id}`)
         .then(res => res.json())
         .then(data => {
-
-          setDeck(data.deck);
-          setCards(data.cards);
-          setStats(data.stats || {});
-          setDue(data.due || 0);
-          setTotal(data.total || 0);
-
-        });
-
+          setDeck(data.deck)
+          setCards(data.cards)
+          setStats(data.stats || {})
+          setDue(data.due || 0)
+          setTotal(data.total || 0)
+        })
     })
   }
 
