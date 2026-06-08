@@ -24,6 +24,9 @@ function Decks() {
   ])
 
   const criarCard = () => {
+    console.log("options state:", options)
+    console.log("newCard:", newCard)
+
     if (!newCard.front.trim() && !newCard.back.trim()) return
 
     const body = { ...newCard }
