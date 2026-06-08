@@ -8,6 +8,10 @@ import psycopg2.extras
 
 load_dotenv()
 
+def get_connection():
+    conn = psycopg2.connect(os.getenv("DATABASE_URL"))
+    return conn
+
 def init_db():
 
     conn = get_connection()
@@ -89,10 +93,6 @@ def init_db():
     conn.commit()
     conn.close()
 
-
-def get_connection():
-    conn = psycopg2.connect(os.getenv("DATABASE_URL"))
-    return conn
 
 ## MY SQL
 ##def get_connection():

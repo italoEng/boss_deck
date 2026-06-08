@@ -4,6 +4,7 @@ from flask import request
 from flask import redirect
 from flask import current_app
 from flask import jsonify
+from app.database import get_connection
 from app.database import create_card, update_card, get_due_cards, update_card_review, delete_card
 from app.database import get_deck
 from werkzeug.utils import secure_filename

@@ -7,6 +7,7 @@ from flask import redirect
 from flask import jsonify
 import csv
 import io
+from app.database import get_connection
 from app.database import create_deck, get_decks, get_deck, update_deck, delete_deck, get_deck_stats
 from app.database import get_cards, get_due_cards, count_cards, create_cards_bulk, delete_cards_bulk
 from app.database import get_review_heatmap, get_review_stats
