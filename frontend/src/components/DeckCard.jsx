@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, CircleCheck} from "lucide-react";
 
 function DeckCard({ deck, editMode }) {
 
@@ -15,8 +15,8 @@ function DeckCard({ deck, editMode }) {
       onClick={() => navigate(`/deck/${deck.id}`)}
       className="
         relative
-        w-[180px]
-        h-[240px]
+        w-45
+        h-60
         border
         rounded-xl
         p-4
@@ -78,6 +78,16 @@ function DeckCard({ deck, editMode }) {
 
       {/* conteúdo */}
       <div className="mt-6">
+
+        {/* marcador em dia */}
+        {deck.due === 0 && deck.total > 0 && (
+          <div className="absolute top-2 left-2">
+            <span>
+              <CircleCheck className="w-6 h-6 text-green-500" />
+            </span>
+          </div>
+        )}
+
         <h2 className="font-bold text-lg">
           {deck.name}
         </h2>

@@ -15,6 +15,8 @@ function Decks() {
   const [stats, setStats] = useState({})
   const [due, setDue] = useState(0)
   const [total, setTotal] = useState(0)
+  const [menuCard, setMenuCard] = useState(null)
+  const [editMode, setEditMode] = useState(false)
   const [showTable, setShowTable] = useState(false)
   const [showModal, setShowModal] = useState(false)
   const [newCard, setNewCard] = useState({ front: "", back: "", card_type: "basic" })
@@ -57,6 +59,14 @@ function Decks() {
     })
   }
 
+  const deletarCard = (cardId) => {
+    fetch(`/api/cards/${cardId}/delete`, { method: "POST" })
+      .then(() => {
+        setCards(cards.filter(c => c.id !== cardId))
+        setMenuCard(null)
+      })
+  }
+
   useEffect(() => {
     fetch(`/api/decks/${id}`)
       .then(res => res.json())
@@ -73,7 +83,7 @@ function Decks() {
 
   return (
     <div>
-      <Navbar />
+      <Navbar editMode={editMode} onEditToggle={() => setEditMode(!editMode)}/>
 
       {/* Header */}
       <div className="px-8 py-6">
@@ -117,6 +127,7 @@ function Decks() {
                 <th className="border p-2 text-left">ID</th>
                 <th className="border p-2 text-left">Frente</th>
                 <th className="border p-2 text-left">Verso</th>
+                <th className="border p-2 text-left w-10"></th>''
               </tr>
             </thead>
             <tbody>
@@ -125,6 +136,27 @@ function Decks() {
                   <td className="border p-2">{card.id}</td>
                   <td className="border p-2" dangerouslySetInnerHTML={{ __html: card.front }} />
                   <td className="border p-2" dangerouslySetInnerHTML={{ __html: card.back }} />
+                  <td className="border p-2 text-center relative">
+                    <button
+                      onClick={() => setMenuCard(menuCard === card.id ? null : card.id)}
+                      className="text-gray-400 hover:text-gray-700 text-lg">
+                      ⚙️
+                    </button>
+                    {menuCard === card.id && (
+                      <div className="absolute right-0 top-8 bg-white shadow-lg rounded-xl z-10 w-32 border">
+                        <button
+                          onClick={() => { setMenuCard(null) /* abrir modal editar */ }}
+                          className="w-full text-left px-4 py-2 hover:bg-gray-50 text-sm text-gray-700">
+                          ✏️ Editar
+                        </button>
+                        <button
+                          onClick={() => deletarCard(card.id)}
+                          className="w-full text-left px-4 py-2 hover:bg-red-50 text-sm text-red-500">
+                          🗑️ Deletar
+                        </button>
+                      </div>
+                    )}                    
+                  </td>
                 </tr>
               ))}
             </tbody>
