@@ -22,9 +22,9 @@ function Navbar({ editMode, setEditMode }) {
           <Moon className="h-6 w-6" />
         </button>
 
-        <button onClick={() => setEditMode(!editMode)}>
+        <button onClick={() => setEditMode && setEditMode(!editMode)}>
           <Settings 
-              className={`
+            className={`
               h-6 w-6 transition-transform duration-300
               ${editMode ? "rotate-90 text-white" : ""}
             `}/>

@@ -19,16 +19,15 @@ function Decks() {
   const [editMode, setEditMode] = useState(false)
   const [showTable, setShowTable] = useState(false)
   const [showModal, setShowModal] = useState(false)
+  const [page, setPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
   const [newCard, setNewCard] = useState({ front: "", back: "", card_type: "basic" })
   const [options, setOptions] = useState([
     { text: '', correct: true },
     { text: '', correct: false }
   ])
 
-  const criarCard = () => {
-    console.log("options state:", options)
-    console.log("newCard:", newCard)
-
+const criarCard = () => {
     if (!newCard.front.trim() && !newCard.back.trim()) return
 
     const body = { ...newCard }
@@ -46,16 +45,7 @@ function Decks() {
       setShowModal(false)
       setNewCard({ front: "", back: "", card_type: "basic" })
       setOptions([{ text: '', correct: true }, { text: '', correct: false }])
-
-      fetch(`/api/decks/${id}`)
-        .then(res => res.json())
-        .then(data => {
-          setDeck(data.deck)
-          setCards(data.cards)
-          setStats(data.stats || {})
-          setDue(data.due || 0)
-          setTotal(data.total || 0)
-        })
+      fetchDeck(page)
     })
   }
 
@@ -67,8 +57,8 @@ function Decks() {
       })
   }
 
-  useEffect(() => {
-    fetch(`/api/decks/${id}`)
+  const fetchDeck = (p = 1) => {
+    fetch(`/api/decks/${id}?page=${p}`)
       .then(res => res.json())
       .then(data => {
         setDeck(data.deck)
@@ -76,14 +66,26 @@ function Decks() {
         setStats(data.stats || {})
         setDue(data.due || 0)
         setTotal(data.total || 0)
+        setTotalPages(data.total_pages || 1)
+        setPage(p)
       })
+  }
+
+  useEffect(() => {
+    fetchDeck(1)
   }, [id])
+
+  const toggleEditMode = (value) => {
+    setEditMode(value)
+    if (value) setShowTable(true)
+  }
+
 
   if (!deck) return <p className="p-8 text-gray-500">Carregando...</p>
 
   return (
     <div>
-      <Navbar editMode={editMode} onEditToggle={() => setEditMode(!editMode)}/>
+      <Navbar editMode={editMode} setEditMode={toggleEditMode} />
 
       {/* Header */}
       <div className="px-8 py-6">
@@ -127,7 +129,7 @@ function Decks() {
                 <th className="border p-2 text-left">ID</th>
                 <th className="border p-2 text-left">Frente</th>
                 <th className="border p-2 text-left">Verso</th>
-                <th className="border p-2 text-left w-10"></th>''
+                {editMode && <th className="border p-2 w-10"></th>}
               </tr>
             </thead>
             <tbody>
@@ -136,31 +138,39 @@ function Decks() {
                   <td className="border p-2">{card.id}</td>
                   <td className="border p-2" dangerouslySetInnerHTML={{ __html: card.front }} />
                   <td className="border p-2" dangerouslySetInnerHTML={{ __html: card.back }} />
-                  <td className="border p-2 text-center relative">
-                    <button
-                      onClick={() => setMenuCard(menuCard === card.id ? null : card.id)}
-                      className="text-gray-400 hover:text-gray-700 text-lg">
-                      ⚙️
-                    </button>
-                    {menuCard === card.id && (
-                      <div className="absolute right-0 top-8 bg-white shadow-lg rounded-xl z-10 w-32 border">
-                        <button
-                          onClick={() => { setMenuCard(null) /* abrir modal editar */ }}
-                          className="w-full text-left px-4 py-2 hover:bg-gray-50 text-sm text-gray-700">
-                          ✏️ Editar
-                        </button>
+                  {editMode && (
+                    <td className="border p-2">
+                      <div className="flex gap-2 justify-center">
                         <button
                           onClick={() => deletarCard(card.id)}
-                          className="w-full text-left px-4 py-2 hover:bg-red-50 text-sm text-red-500">
-                          🗑️ Deletar
+                          className="bg-red-100 hover:bg-red-200 text-red-600 px-2 py-1 rounded-lg text-xs">
+                          🗑️
                         </button>
                       </div>
-                    )}                    
-                  </td>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {showTable && totalPages > 1 && (
+        <div className="flex justify-center items-center gap-3 mt-4 pb-8">
+          <button
+            onClick={() => fetchDeck(page - 1)}
+            disabled={page === 1}
+            className="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 disabled:opacity-40">
+            ← Anterior
+          </button>
+          <span className="text-gray-500 text-sm">{page} / {totalPages}</span>
+          <button
+            onClick={() => fetchDeck(page + 1)}
+            disabled={page === totalPages}
+            className="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 disabled:opacity-40">
+            Próxima →
+          </button>
         </div>
       )}
 
