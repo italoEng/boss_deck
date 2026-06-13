@@ -50,12 +50,12 @@ const criarCard = () => {
   }
 
   const deletarCard = (cardId) => {
-    fetch(`/api/cards/${cardId}/delete`, { method: "POST" })
+    fetch(`/api/deck/${id}/cards/${cardId}/delete`, { method: "POST" })
       .then(() => {
-        setCards(cards.filter(c => c.id !== cardId))
-        setMenuCard(null)
+        fetchDeck(page)
       })
   }
+
 
   const fetchDeck = (p = 1) => {
     fetch(`/api/decks/${id}?page=${p}`)
@@ -201,6 +201,7 @@ const criarCard = () => {
                   front: html
                 }))
               }
+              placeholder="Frente do card..."
             />
 
             {/* Alternativas */}
@@ -239,6 +240,7 @@ const criarCard = () => {
                   back: html
                 }))
               }
+              placeholder="Verso do card..."
             />  
 
             <button onClick={criarCard}

@@ -50,3 +50,30 @@ h2,
   margin-top: 1.25rem;
   margin-bottom: 0.75rem;
 }
+
+.tiptap p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: #adb5bd;
+  pointer-events: none;
+  height: 0;
+}
+
+/* tabela */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 8px 0;
+}
+
+table td,
+table th {
+  border: 1px solid #ccc;
+  padding: 6px 10px;
+  min-width: 60px;
+}
+
+table th {
+  background: #f3f4f6;
+  font-weight: bold;
+}
