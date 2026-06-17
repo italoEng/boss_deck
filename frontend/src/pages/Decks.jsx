@@ -5,6 +5,7 @@ import CardEditor from '../components/CardEditor'
 import {Plus} from "lucide-react";
 import {Play} from "lucide-react";
 import {Edit} from "lucide-react";
+import { Upload } from "lucide-react";
 
 
 function Decks() {
@@ -118,7 +119,38 @@ const criarCard = () => {
           hover:scale-105 transition w-20 h-20">
           <Edit className='w-6 h-6'/>
         </button>
+
+        <label className="bg-white shadow rounded-xl p-6 flex items-center justify-center 
+          hover:scale-105 transition w-20 h-20 cursor-pointer">
+          <Upload className="w-6 h-6" />
+          <input
+            type="file"
+            accept=".csv"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files[0]
+              if (!file) return
+
+              const formData = new FormData()
+              formData.append("csv_file", file)
+
+              fetch(`/api/decks/${id}/cards/import`, {
+                method: "POST",
+                body: formData
+              })
+              .then(res => res.json())
+              .then(data => {
+                console.log("resposta import:", data)
+                fetchDeck(page)
+                e.target.value = ""
+              })
+            }}
+          />
+        </label>
+
       </div>
+
+
 
       {/* Lista de cards */}
       {showTable && (

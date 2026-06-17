@@ -102,30 +102,30 @@ def deck_view(deck_id):
 @deck_bp.route("/api/decks/<int:deck_id>/cards/import", methods=["POST"])
 def import_cards(deck_id):
     if "csv_file" not in request.files:
-        return redirect(f"/deck/{deck_id}?erro=Arquivo+nao+encontrado")
+        return jsonify({"error": "Arquivo não encontrado"}), 400
     
     file = request.files["csv_file"]
     if file.filename == "" or not file.filename.endswith(".csv"):
-        return redirect(f"/deck/{deck_id}?erro=Arquivo+invalido")
+        return jsonify({"error": "Arquivo inválido"}), 400
     
     try:
         content = file.read().decode("utf-8")
         reader = csv.DictReader(io.StringIO(content))
         cards_list = []
         for row in reader:
-            if row.get("front") or row.get("frente") and row.get("back") or row.get("verso"):
+            front = row.get("front") or row.get("frente", "")
+            back = row.get("back") or row.get("verso", "")
+            if front and back:
                 cards_list.append({
-                    "front": row["front"],
-                    "back": row["back"],
+                    "front": front,
+                    "back": back,
                     "front_img": row.get("front_img", ""),
                     "front_audio": row.get("front_audio", "")
                 })
         create_cards_bulk(deck_id, cards_list)
-        return redirect(f"/deck/{deck_id}?sucesso={len(cards_list)}+cards+importados")
+        return jsonify({"ok": True, "imported": len(cards_list)})
     except Exception as e:
-        print(f"Erro ao importar CSV: {e}")
-        
-        return redirect(f"/deck/{deck_id}?erro=Erro+ao+importar+CSV")
+        return jsonify({"error": str(e)}), 500
     
 
 @deck_bp.route("/api/decks/<int:deck_id>/cards/delete-bulk", methods=["POST"])

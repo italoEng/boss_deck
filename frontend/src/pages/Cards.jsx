@@ -41,6 +41,7 @@ function Cards() {
   const [done, setDone] = useState(false)
   const [answered, setAnswered] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [crossed, setCrossed] = useState([])
 
   const shuffle = (items) => {
     const array = [...items]
@@ -85,6 +86,7 @@ function Cards() {
         setIndex(next)
         setRevealed(false)
         setAnswered(null)
+        setCrossed([])
       }
     })
   }
@@ -129,18 +131,39 @@ function Cards() {
         {card.card_type === 'multiple_choice' && card.options && (
           <div className="mt-8 flex flex-col gap-3">
             {card.options.map((option, i) => {
-              let cls = "flex-1 border border-gray-200 px-4 py-3 rounded-xl text-left transition"
+              let cls = "flex-1 border border-gray-200 px-4 py-3 rounded-xl text-left transition flex items-center justify-between gap-2"
               if (answered !== null) {
                 if (option.correct) cls += " bg-green-100 border-green-500"
                 else if (i === answered && !option.correct) cls += " bg-red-100 border-red-500"
+              } else if (crossed.includes(i)) {
+                cls += " opacity-40 bg-gray-50"
               } else {
                 cls += " hover:bg-indigo-50 hover:border-indigo-300"
               }
               return (
-                <button key={i} onClick={() => responderAlternativa(i)}
-                  className={cls} disabled={answered !== null}>
-                  <MathJaxHtml html={option.text} />
-                </button>
+                <div key={i} className="flex items-center gap-2">
+                  {/* botão de riscar */}
+                  {answered === null && (
+                    <button
+                      onClick={() => setCrossed(prev =>
+                        prev.includes(i) ? prev.filter(x => x !== i) : [...prev, i]
+                      )}
+                      className="text-gray-300 hover:text-red-400 transition text-lg font-bold"
+                      title="Riscar alternativa">
+                      ✕
+                    </button>
+                  )}
+
+                  <button
+                    onClick={() => responderAlternativa(i)}
+                    className={cls}
+                    disabled={answered !== null}>
+                    <MathJaxHtml html={option.text} />
+                    {crossed.includes(i) && answered === null && (
+                      <span className="text-gray-400 text-lg">✕</span>
+                    )}
+                  </button>
+                </div>
               )
             })}
           </div>
