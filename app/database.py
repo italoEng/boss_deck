@@ -302,19 +302,28 @@ def get_review_heatmap():
     conn.close()
     return data
 
-# csv
+
 def create_cards_bulk(deck_id, cards_list):
     conn = get_connection()
     cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    inserted = 0
     for card in cards_list:
+        # verifica se já existe
         cursor.execute(
-            """INSERT INTO cards (deck_id, front, back, next_review, front_img, front_audio) 
-               VALUES (%s, %s, %s, CURRENT_DATE, %s, %s)""",
-            (deck_id, card["front"], card["back"], 
-             card.get("front_img", ""), card.get("front_audio", ""))
+            "SELECT id FROM cards WHERE deck_id = %s AND front = %s AND back = %s",
+            (deck_id, card["front"], card["back"])
         )
+        if cursor.fetchone() is None:
+            cursor.execute(
+                """INSERT INTO cards (deck_id, front, back, next_review, front_img, front_audio) 
+                   VALUES (%s, %s, %s, CURRENT_DATE, %s, %s)""",
+                (deck_id, card["front"], card["back"],
+                 card.get("front_img", ""), card.get("front_audio", ""))
+            )
+            inserted += 1
     conn.commit()
     conn.close()
+    return inserted
 
 def delete_cards_bulk(ids):
     conn = get_connection()

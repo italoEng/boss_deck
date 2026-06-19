@@ -122,8 +122,12 @@ def import_cards(deck_id):
                     "front_img": row.get("front_img", ""),
                     "front_audio": row.get("front_audio", "")
                 })
-        create_cards_bulk(deck_id, cards_list)
-        return jsonify({"ok": True, "imported": len(cards_list)})
+        inserted = create_cards_bulk(deck_id, cards_list)
+        return jsonify({
+            "ok": True,
+            "imported": inserted,
+            "skipped": len(cards_list) - inserted
+        })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     

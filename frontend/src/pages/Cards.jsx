@@ -32,6 +32,7 @@ function MathJaxHtml({ html, className }) {
   return <div ref={containerRef} className={classNames} />
 }
 
+
 function Cards() {
   const { id } = useParams()
   const navigate = useNavigate()
@@ -64,6 +65,20 @@ function Cards() {
         setLoading(false)
       })
   }, [id])
+
+  useEffect(() => {
+  const handleKey = (e) => {
+    if (!revealed) {
+      if (e.key === ' ' || e.key === 'Enter') setRevealed(true)
+      return
+    }
+    if (e.key === '1') review(0)
+    if (e.key === '2') review(3)
+    if (e.key === '3') review(5)
+  }
+  window.addEventListener('keydown', handleKey)
+  return () => window.removeEventListener('keydown', handleKey)
+}, [revealed, index])
 
   const card = cards[index]
   const total = cards.length
