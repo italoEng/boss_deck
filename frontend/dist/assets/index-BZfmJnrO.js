@@ -35,7 +35,7 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
         px-8 py-4 flex justify-between items-center`,children:[(0,F.jsx)(Gn,{to:`/`,className:`flex items-center gap-3`,children:(0,F.jsx)(`img`,{src:Pc,alt:`Boss Deck`,className:`h-12 w-12 rounded`})}),(0,F.jsxs)(`div`,{className:`flex items-center gap-3`,children:[(0,F.jsx)(`button`,{children:(0,F.jsx)(rl,{className:`h-6 w-6`})}),(0,F.jsx)(`button`,{onClick:()=>t&&t(!e),children:(0,F.jsx)(ll,{className:`
               h-6 w-6 transition-transform duration-300
               ${e?`rotate-90 text-white`:``}
-            `})})]})]})}function vl({deck:e,editMode:t}){let n=Tt(),r=e.total>0?Math.round(e.mastered/e.total*100):0;return(0,F.jsxs)(`div`,{onClick:()=>n(`/deck/${e.id}`),className:`\r
+            `})}),(0,F.jsx)(`button`,{onClick:()=>Nc.auth.signOut(),children:`Sair`})]})]})}function vl({deck:e,editMode:t}){let n=Tt(),r=e.total>0?Math.round(e.mastered/e.total*100):0;return(0,F.jsxs)(`div`,{onClick:()=>n(`/deck/${e.id}`),className:`\r
         relative\r
         w-45\r
         h-60\r

@@ -7,7 +7,7 @@ from flask import redirect
 from flask import jsonify
 import csv
 import io
-from app.database import get_connection
+from app.database import get_connection, get_user_id_from_token
 from app.database import create_deck, get_decks, get_deck, update_deck, delete_deck, get_deck_stats
 from app.database import get_cards, get_due_cards, count_cards, create_cards_bulk, delete_cards_bulk
 from app.database import get_review_heatmap, get_review_stats
@@ -15,7 +15,9 @@ from app.database import get_review_heatmap, get_review_stats
 
 deck_bp = Blueprint("deck", __name__)
 
-
+def get_user_id():
+    token = request.headers.get("Authorization", "").replace("Bearer ", "")
+    return get_user_id_from_token(token)
 
 @deck_bp.route("/api/decks")
 def index():

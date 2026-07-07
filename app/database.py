@@ -4,6 +4,7 @@ import json
 from sm2 import sm2
 import psycopg2
 import psycopg2.extras
+import jwt
 
 
 load_dotenv()
@@ -365,6 +366,13 @@ def get_review_stats(period='day'):
     conn.close()
     return [{"periodo": r[0], "deck_name": r[1], "total": r[2]} for r in data] 
 
+
+def get_user_id_from_token(token):
+    try:
+        decoded = jwt.decode(token, options={"verify_signature": False})
+        return decoded.get("sub")
+    except:
+        return None
 
 if __name__ == "__main__":
     init_db()
