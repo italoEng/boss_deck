@@ -11,6 +11,7 @@ function Home() {
   const [heatmap, setHeatmap] = useState([]);
   const [showModal, setShowModal] = useState(false)
   const [newDeck, setNewDeck] = useState({ name: "", description: "" })
+  const [loading, setLoading] = useState(true)
 
   const scrollCarousel = (direction) => {
     if (!carouselRef.current) return;
@@ -22,13 +23,14 @@ function Home() {
   };
 
   const fetchDecks = () => {
-  fetch("/api/decks")
-    .then((res) => res.json())
-    .then((data) => {
-      setDecks(data.decks);
-      setHeatmap(data.heatmap);
-    });
-  };
+    fetch("/api/decks")
+      .then((res) => res.json())
+      .then((data) => {
+        setDecks(data.decks)
+        setHeatmap(data.heatmap)
+        setLoading(false)  // <-- adicione
+      })
+  }
 
   const criarDeck = () => {
     if (!newDeck.name.trim()) return;
@@ -54,7 +56,18 @@ function Home() {
       });
   }, []);
 
-
+  if (loading) return (
+    <div>
+      <Navbar />
+      <div className="px-8 py-6">
+        <div className="flex gap-4 overflow-x-auto">
+          {[1,2,3,4].map(i => (
+            <div key={i} className="w-[180px] h-[240px] bg-gray-200 rounded-xl animate-pulse shrink-0" />
+          ))}
+        </div>
+      </div>
+    </div>
+  )
 
   return (
     <div>
